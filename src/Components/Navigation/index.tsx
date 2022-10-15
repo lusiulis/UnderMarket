@@ -16,7 +16,8 @@ const Navigation = () => {
   return (
     <Navbar.Navigator screenOptions={{
       headerShown: false,
-      tabBarStyle: styles.navigator
+      tabBarStyle: styles.navigator,
+      
     }}
     initialRouteName="Home">
       <Navbar.Screen name="Home" component={Home} options={{
@@ -59,10 +60,9 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 20,
     right: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "white",
     borderRadius: 15,
-    height: 70,
-    borderColor: '#fff',
+    height: 60,
     justifyContent: "center",
     alignItems: "center",
     ...CommonSyles.baseShadow

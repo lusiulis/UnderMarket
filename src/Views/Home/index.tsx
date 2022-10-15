@@ -1,13 +1,14 @@
 import { View, Text, StyleSheet } from "react-native"
-import { AppColors } from "../../Assets/Styles"
+import LinearGradient from "react-native-linear-gradient"
+import { AppColors, CommonSyles } from "../../Assets/Styles"
 
 const Home = () => {
   return (
-    <View style={styles.mainContainer}>
+    <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']} style={styles.mainContainer}>
         <View style={styles.container}>
           
         </View>
-    </View>
+    </LinearGradient>
   )
 }
 
@@ -15,23 +16,21 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: AppColors.turquoise
   },
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: "white",
+    top: 10,
     width: 350,
     height: 100,
-    borderRadius: 10,
+    ...CommonSyles.transparentContainer
   },
   absoluteContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: "white",
     width: 350,
     height: 100,
-    borderRadius: 10,
+    ...CommonSyles.transparentContainer
   }
 })
 

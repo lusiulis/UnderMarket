@@ -7,10 +7,15 @@ export const CommonSyles = StyleSheet.create({
         shadowRadius: 3.5,
         elevation: 4,
     },
+    transparentContainer: {
+        borderRadius: 20,
+        backgroundColor: 'rgba(18, 39, 49, 0.49)'
+    }
 })
 
 export const AppColors = {
     turquoise: "#46D9B5",
     darkOcean: "#1D5771",
-    calidPink: "#E28888"
+    calidPink: "#E28888",
+    baseRed: "#B51F3A"
 }

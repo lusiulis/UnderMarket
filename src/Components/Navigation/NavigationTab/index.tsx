@@ -17,20 +17,20 @@ const NavigationTab = ({focused, value}: INavigationTabProps) => {
             top: -30,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: AppColors.turquoise,
             borderRadius: 35,
             height: 55,
-            width: 55
+            width: 55,
+            backgroundColor: "white"
         },
         image: {
             width: 35,
             height: 35,
-            tintColor: focused ? AppColors.darkOcean : "black"
+            tintColor: focused ? AppColors.baseRed : "black"
         },
         postImage: {
             width: 45,
             height: 45,
-            tintColor: focused ? AppColors.darkOcean : "black"
+            tintColor: focused ? AppColors.baseRed : "black"
         }
     });
     const iconSource = value === "Home" ? require("../../../Assets/Icons/home.png") : value === "Search" ? require("../../../Assets/Icons/search.png") : value === "Notifications" ? require("../../../Assets/Icons/bell.png") : value === "Profile" ? require("../../../Assets/Icons/bell.png") : value === "Post" ? require("../../../Assets/Icons/add.png") : require("../../../Assets/Icons/bell.png")
