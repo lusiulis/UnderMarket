@@ -1,10 +1,8 @@
-import { View, Text, StyleSheet } from "react-native"
+import { View, StyleSheet } from "react-native"
 import LinearGradient from "react-native-linear-gradient"
-import { AppColors, CommonSyles } from "../../Assets/Styles"
-import { addUser } from "../../Database"
+import { CommonSyles } from "../../Assets/Styles"
 
 const Home = () => {
-  addUser();
   return (
     <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']} style={styles.mainContainer}>
         <View style={styles.container}>
