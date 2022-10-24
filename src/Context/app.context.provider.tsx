@@ -1,12 +1,12 @@
-import {createContext} from 'react';
-import {useAppContext} from '../hooks/useAppContext';
+import {createContext, ReactElement} from 'react';
+import {useAppContext} from '../Hooks/useAppContext';
 
 export const AppContext = createContext({});
-export const RewardsContextProvider = (props: any) => {
+export const RewardsContextProvider = (props: ReactElement) => {
   const appContext = useAppContext();
   return (
     <AppContext.Provider value={{appContext}}>
-      {props.children}
+      {props}
     </AppContext.Provider>
   );
 };
