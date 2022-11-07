@@ -5,7 +5,12 @@ const UsersCollection = firestore().collection('user')
 const ShopColletion = firestore().collection('shop')
 
 export const login = async ({username, password}: ILoginProps) => {
-    return UsersCollection.where('username', '==', username).where('password', '==', password).count().get()
+    return await UsersCollection.where('username', '==', username).where('password', '==', password).get().then((response) => {
+        return {
+            valid: response.docs.length === 1,
+            data: response.docs
+        }
+    })
 }
 
 export const signIn = async ({email, username, password, phoneNumber}: ISingInProps) => {

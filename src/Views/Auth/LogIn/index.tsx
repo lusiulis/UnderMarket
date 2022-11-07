@@ -24,7 +24,9 @@ const LogIn = ({navigation}: IAuthScreenProps) => {
 
   const handleLogIn = async () => {
     const response = await login(formData);
-    console.log("Respnse: ", response)
+    if(response.valid) {
+      navigation.navigate('AppNavigation', response.data[0].id)
+    }
   }
 
   const handleForgotPassword = () => {

@@ -37,8 +37,8 @@ const SignIn = ({navigation}: IAuthScreenProps) => {
 
   const handleSubmit = async () => {
     const { phoneNumber, ...userData } = formData;
-    const response = isStore ? await signIn(formData) : await signIn(userData);
-    console.log("response: ", response)
+    isStore ? await signIn(formData) : await signIn(userData);
+    navigation.navigate('LogIn')
   }
 
   return (
