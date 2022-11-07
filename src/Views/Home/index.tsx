@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet } from "react-native"
+import { View, StyleSheet } from "react-native"
 import LinearGradient from "react-native-linear-gradient"
-import { AppColors, CommonSyles } from "../../Assets/Styles"
+import { CommonSyles } from "../../Assets/Styles"
 
 const Home = () => {
   return (

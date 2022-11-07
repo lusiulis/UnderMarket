@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "369200169979",
+    "project_id": "lu-is-dev",
+    "storage_bucket": "lu-is-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369200169979:android:3cd68f97745dbb4f27015e",
+        "android_client_info": {
+          "package_name": "com.undermarket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "369200169979-mo4v1c97ulo9re46e96va0dg3jq8fs27.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.undermarket",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "369200169979-tgs50tilfnb0lm9bp25bcpdgie2vb4t8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwhgchWFfXpfWH2j6Sm9PP7D1JkPq6XIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "369200169979-tgs50tilfnb0lm9bp25bcpdgie2vb4t8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
