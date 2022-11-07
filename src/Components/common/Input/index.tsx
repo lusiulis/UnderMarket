@@ -1,17 +1,21 @@
-import React from 'react';
-import { View, Text, TextInput } from 'react-native';
-import { StyleSheet } from 'react-native';
+import { useState } from "react";
+import { View, StyleSheet, Text, TextInput } from 'react-native';
+import { AppColors } from "../../../Assets/Styles";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { AppColors } from '../../../Assets/Styles';
+import { IconName } from "../../../Utils/common"
 
-const Input = ({
-    ...props
+type IInputProps = {
+    icon: IconName;
+    onChange: (v: string) => void;
+    style?: Object;
+    value: string;
+    error?: boolean;
+    placeHolder?: string;
+    secure?: boolean;
+}
 
-}) => {
-    const { onChangeText, icon, style,
-        value, label, error, placeholder } = props;
-    const [focused, setFocused] = React.useState(false);
-
+const Input = ({icon, onChange, style, value, error, placeHolder, secure}: IInputProps) => {
+    const [focused, setFocused] = useState(false);
 
     const getBorderColor = () => {
         if (error) {
@@ -24,57 +28,54 @@ const Input = ({
             return AppColors.grey;
         }
     };
+
     return (
-        <View style={styles.inputContainer}>
-            {label && <Text>{label}</Text>}
-
-            <View
-                style={[
-                    styles.wrapper,
-                    { alignItems: icon ? 'center' : 'baseline' },
-                    { borderColor: getBorderColor(), flexDirection: 'row' },
-                ]}>
-                <View>
-                    {icon && <Icon  name={icon} size={30} /> }
-                </View>
-
-                <TextInput
-                    style={[styles.textInput, style]}
-                    onChangeText={onChangeText}
-                    placeholder={placeholder}
-                    value={value}
-                    onFocus={() => {
-                        setFocused(true);
-                    }}
-                    onBlur={() => {
-                        setFocused(false);
-                    }}
-                    {...props}
-                />
-            </View>
-
-            {error && <Text style={styles.error}>{error}</Text>}
+      <View style={styles.inputContainer}>
+        <View
+          style={[
+            styles.wrapper,
+            { alignItems: icon ? 'center' : 'baseline' },
+            { borderColor: getBorderColor(), flexDirection: 'row' },
+          ]}>
+          <View>
+            {icon && <Icon name={icon} size={18} color='white' /> }
+          </View>
+          <TextInput
+            placeholderTextColor='white'
+            style={[styles.textInput, style]}
+            onChangeText={onChange}
+            placeholder={placeHolder}
+            value={value}
+            onFocus={() => {
+                setFocused(true);
+            }}
+            onBlur={() => {
+                setFocused(false);
+            }}
+            secureTextEntry={secure}
+          />
         </View>
-    );
-};
+        {error && <Text style={styles.error}>{error}</Text>}
+      </View>
+    )
+}
 
 const styles = StyleSheet.create({
     wrapper: {
-        height: 42,
-        borderWidth: 1,
-        borderRadius: 4,
+        borderRadius: 10,
         paddingHorizontal: 5,
-        marginTop: 5,
+        backgroundColor: 'rgba(33, 31, 31, 0.7)',
+        alignItems: "center"
     },
-
     inputContainer: {
         paddingVertical: 12,
     },
-
     textInput: {
+        color: 'white',
+        fontFamily: 'Montserrat-Bold',
         width: '85%',
+        marginLeft: '5%'
     },
-
     error: {
         color: AppColors.baseRed,
         paddingTop: 4,
@@ -83,5 +84,4 @@ const styles = StyleSheet.create({
 
 });
 
-
-export default Input;
+export default Input

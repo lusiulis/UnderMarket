@@ -1,6 +1,12 @@
 import { StyleSheet } from "react-native"
 
 export const CommonSyles = StyleSheet.create({
+    mainContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%'
+    },
     baseShadow: {
         shadowColor: '#000',
         shadowOpacity: 0.25,
@@ -8,14 +14,19 @@ export const CommonSyles = StyleSheet.create({
         elevation: 4,
     },
     transparentContainer: {
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
         borderRadius: 20,
-        backgroundColor: 'rgba(18, 39, 49, 0.49)'
+        alignItems: 'center',
+        padding: 20
     },
     mt_1 : {
         marginTop: 10
     },
     mt_2 : {
         marginTop: 20
+    },
+    baseText: {
+        fontFamily: 'Montserrat'
     }
 })
 
@@ -26,4 +37,8 @@ export const AppColors = {
     baseRed: "#B51F3A",
     grey: '#adb5bd',
     white: '#ffffff',
+}
+
+export const AppGradientsColors = {
+    active: ['#DE2B6B', '#7D24C2']
 }
