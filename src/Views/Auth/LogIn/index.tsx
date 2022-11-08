@@ -1,12 +1,12 @@
 import {useState} from 'react';
-import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {AppGradientsColors, CommonSyles} from '../../../Assets/Styles';
-import GradientButton from '../../../Components/common/Button/GradientButton';
-import Input from '../../../Components/common/Input';
-import AppText from '../../../Components/common/Text';
-import GradientText from '../../../Components/common/Text/GradientText';
-import { IAuthScreenProps } from '../../../Components/Navigation/navigation';
-import { login } from '../../../Models/Auth';
+import {View, Image, StyleSheet} from 'react-native';
+import {CommonSyles} from '../../../Assets/Styles';
+import GradientButton from '../../../Components/Common/Button/GradientButton';
+import Input from '../../../Components/Common/Input';
+import AppText from '../../../Components/Common/Text';
+import GradientText from '../../../Components/Common/Text/GradientText';
+import {IAuthScreenProps} from '../../../Components/Navigation/navigation';
+import {login} from '../../../Models/Auth';
 
 const LogIn = ({navigation}: IAuthScreenProps) => {
   const [formData, setFormData] = useState({
@@ -24,18 +24,16 @@ const LogIn = ({navigation}: IAuthScreenProps) => {
 
   const handleLogIn = async () => {
     const response = await login(formData);
-    if(response.valid) {
-      navigation.navigate('AppNavigation', response.data[0].id)
+    if (response.valid) {
+      navigation.navigate('AppNavigation', response.data[0].id);
     }
-  }
+  };
 
-  const handleForgotPassword = () => {
-
-  }
+  const handleForgotPassword = () => {};
 
   const handleSignIn = () => {
-    navigation.navigate('SignIn')
-  }
+    navigation.navigate('SignIn');
+  };
 
   return (
     <View style={CommonSyles.mainContainer}>
@@ -68,7 +66,11 @@ const LogIn = ({navigation}: IAuthScreenProps) => {
             secure
           />
         </View>
-        <GradientButton style={styles.button} onPress={handleLogIn} font='bold' fontSize={20}>
+        <GradientButton
+          style={styles.button}
+          onPress={handleLogIn}
+          font="bold"
+          fontSize={20}>
           Iniciar Sesión
         </GradientButton>
         <GradientText
@@ -119,7 +121,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '7%'
+    marginTop: '7%',
   },
   signinText: {
     marginLeft: '2%',

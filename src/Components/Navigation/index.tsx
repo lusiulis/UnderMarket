@@ -23,7 +23,7 @@ const Navigation = () => {
         component={Home}
         options={{
           tabBarIcon: ({focused, color, size}) => (
-            <NavigationTab focused={focused} value="Home" />
+            <NavigationTab icon='home' focused={focused} value="Home" />
           ),
           tabBarShowLabel: false,
         }}
@@ -33,7 +33,7 @@ const Navigation = () => {
         component={Search}
         options={{
           tabBarIcon: ({focused}) => (
-            <NavigationTab focused={focused} value="Search" />
+            <NavigationTab icon='search' focused={focused} value="Search" />
           ),
           tabBarShowLabel: false,
         }}
@@ -43,7 +43,7 @@ const Navigation = () => {
         component={Post}
         options={{
           tabBarIcon: ({focused}) => (
-            <NavigationTab focused={focused} value="Post" />
+            <NavigationTab icon='add-circle' focused={focused} value="Post" />
           ),
           tabBarShowLabel: false,
         }}
@@ -53,7 +53,7 @@ const Navigation = () => {
         component={Notifications}
         options={{
           tabBarIcon: ({focused}) => (
-            <NavigationTab focused={focused} value="Notifications" />
+            <NavigationTab icon='notifications' focused={focused} value="Notifications" />
           ),
           tabBarShowLabel: false,
         }}
@@ -63,7 +63,7 @@ const Navigation = () => {
         component={Profile}
         options={{
           tabBarIcon: ({focused}) => (
-            <NavigationTab focused={focused} value="Profile" />
+            <NavigationTab icon='profile' focused={focused} value="Profile" />
           ),
           tabBarShowLabel: false,
         }}
@@ -75,11 +75,10 @@ const Navigation = () => {
 const styles = StyleSheet.create({
   navigator: {
     position: 'absolute',
-    bottom: 10,
-    left: 20,
-    right: 20,
+    bottom: 0,
     backgroundColor: 'white',
-    borderRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
