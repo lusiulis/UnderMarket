@@ -1,35 +1,22 @@
-import { View, Text, StyleSheet } from "react-native"
-import { AppColors } from "../../Assets/Styles"
+import {Camera, useCameraDevices} from 'react-native-vision-camera';
+import {View, StyleSheet} from 'react-native';
+import AppCamera from '../../Components/Camera';
 
-const Post = () => {
-  return (
-    <View style={styles.mainContainer}>
-        <Text>Post View aaa</Text>
-        <View style={styles.container}>
-          
-        </View>
-    </View>
-  )
+const cameraPermissions = async () => {
+  const cameraPermission = await Camera.getCameraPermissionStatus();
+  const microphonePermission = await Camera.getMicrophonePermissionStatus();
+
+  const newCameraPermission = await Camera.requestCameraPermission();
+  const newMicrophonePermission = await Camera.requestMicrophonePermission();
 }
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: AppColors.turquoise
-  },
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: "white",
-    width: 350,
-    height: 100,
-    borderRadius: 10,
-  },
-  absoluteContainer: {
-    
-  }
-})
+const Post = () => {
+  cameraPermissions()
 
-export default Post
+  
+  return <AppCamera />
+      
+  
+};
+
+export default Post;

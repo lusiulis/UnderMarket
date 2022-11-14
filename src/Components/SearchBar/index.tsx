@@ -1,10 +1,10 @@
 import {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import { CommonSyles } from '../../Assets/Styles';
+import {CommonStyles} from '../../Assets/Styles';
 import GradientWrapper from '../Common/GradientWrapper';
 import Input from '../Common/Input';
 
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,36 +28,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   categoryContainer: {
     display: 'flex',
-  }
+  },
 });
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearchBarChange = (value: string) => {
-    setSearchTerm(value)
-  }
-  
-  const OptionsIcon = (style?: Object) => <Icon name='options-sharp' size={25} style={style} />
-
-  const MessagesIcon = (style?: Object) => <Icon name='paper-plane' size={25} style={style} />
+    setSearchTerm(value);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.widgetHeader}>
         <View style={styles.searchContainer}>
-          <Input style={CommonSyles} value={searchTerm} placeHolder="Buscar..." onChange={handleSearchBarChange} color='black' />
-          <GradientWrapper children={OptionsIcon()} childrenTransparent={OptionsIcon({opacity: 0})} />
+          <Input
+            style={CommonStyles}
+            value={searchTerm}
+            placeHolder="Buscar..."
+            onChange={handleSearchBarChange}
+            color="black"
+          />
+          <View style={{display: 'flex', flex: .5}}>
+            <GradientWrapper>
+              <Icon name="options-sharp" size={25} color="white" />
+            </GradientWrapper>
+          </View>
         </View>
-        <GradientWrapper children={MessagesIcon()} childrenTransparent={MessagesIcon({opacity: 0})} />
+        <GradientWrapper>
+          <Icon name="paper-plane" size={25} color="white" />
+        </GradientWrapper>
       </View>
-      <View style={styles.categoryContainer}>
-
-      </View>
+      <View style={styles.categoryContainer}></View>
     </View>
   );
 };

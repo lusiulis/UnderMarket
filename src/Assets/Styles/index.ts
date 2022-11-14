@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native"
 
-export const CommonSyles = StyleSheet.create({
+export const CommonStyles = StyleSheet.create({
     mainContainer: {
         alignItems: 'center',
         justifyContent: 'center',

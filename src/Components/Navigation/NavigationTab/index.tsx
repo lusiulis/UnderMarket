@@ -1,9 +1,8 @@
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {AppColors, AppGradientsColors} from '../../../Assets/Styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProfileIcon from '../../Snippets/ProfileIcon';
-import MaskedView from '@react-native-masked-view/masked-view';
-import LinearGradient from 'react-native-linear-gradient';
+import GradientWrapper from '../../Common/GradientWrapper';
 
 type IIcon = 'home' | 'search' | 'notifications' | 'add-circle' | 'profile';
 
@@ -23,50 +22,24 @@ const NavigationTab = ({focused, value, icon}: INavigationTabProps) => {
       top: '-25%',
       justifyContent: 'center',
       alignItems: 'center',
-      borderRadius: 35,
-      backgroundColor: 'white',
-    },
-    image: {
-      width: 35,
-      height: 35,
-      tintColor: focused ? AppColors.baseRed : 'black',
-    },
-    postImage: {
-      width: 45,
-      height: 45,
-      tintColor: focused ? AppColors.baseRed : 'black',
-    },
+    }
   });
 
   return (
     <View style={value === 'Post' ? styles.postContainer : styles.container}>
       {icon !== 'profile' ? (
         focused ? (
-          <MaskedView
-            maskElement={
-              <View
-                style={{
-                  backgroundColor: 'transparent',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Icon name={icon} size={icon === 'add-circle' ? 50 : 35} />
-              </View>
-            }>
-            <LinearGradient
-              colors={AppGradientsColors.active}
-              style={{
-                backgroundColor: 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Icon name={icon} size={icon === 'add-circle' ? 50 : 35} style={{opacity: 0}} />
-            </LinearGradient>
-          </MaskedView>
+          <GradientWrapper>
+            <Icon
+              size={icon === 'add-circle' ? 55 : 35}
+              name={icon}
+              color="black"
+            />
+          </GradientWrapper>
         ) : (
           <Icon
             name={icon}
-            size={icon === 'add-circle' ? 50 : 35}
+            size={icon === 'add-circle' ? 55 : 35}
             color="black"
           />
         )

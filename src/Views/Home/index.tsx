@@ -1,8 +1,7 @@
 import {View, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {CommonSyles} from '../../Assets/Styles';
+import {CommonStyles} from '../../Assets/Styles';
 import SearchBar from '../../Components/SearchBar';
-import { PowerOff } from '../../Components/SearchBar/test';
 
 const Home = () => {
   return (
@@ -10,9 +9,7 @@ const Home = () => {
       colors={['#1D5771', '#2A8187', '#46D9B5']}
       style={styles.mainContainer}>
         <SearchBar />
-        <View style={{height: '30%', width: '30%', backgroundColor: 'black'}}>
-          <PowerOff />
-        </View>
+        
       </LinearGradient>
   );
 };
@@ -27,13 +24,13 @@ const styles = StyleSheet.create({
     top: 10,
     width: 350,
     height: 100,
-    ...CommonSyles.transparentContainer,
+    ...CommonStyles.transparentContainer,
   },
   absoluteContainer: {
     justifyContent: 'center',
     width: 350,
     height: 100,
-    ...CommonSyles.transparentContainer,
+    ...CommonStyles.transparentContainer,
   },
 });
 

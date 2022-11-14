@@ -1,5 +1,5 @@
 import {View, Image, StyleSheet, Switch} from 'react-native';
-import {CommonSyles} from '../../../Assets/Styles';
+import {CommonStyles} from '../../../Assets/Styles';
 import AppText from '../../../Components/Common/Text';
 import GradientText from '../../../Components/Common/Text/GradientText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -44,7 +44,7 @@ const SignIn = ({navigation}: IAuthScreenProps) => {
   };
 
   return (
-    <View style={CommonSyles.mainContainer}>
+    <View style={CommonStyles.mainContainer}>
       <Image
         style={styles.backgroud}
         source={require('../../../Assets/Images/login-back.png')}
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     width: '80%',
     paddingVertical: '5%',
     justifyContent: 'space-between',
-    ...CommonSyles.transparentContainer,
+    ...CommonStyles.transparentContainer,
   },
   goBack: {
     position: 'absolute',

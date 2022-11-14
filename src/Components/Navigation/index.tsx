@@ -1,6 +1,6 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StyleSheet} from 'react-native';
-import {CommonSyles} from '../../Assets/Styles';
+import {CommonStyles} from '../../Assets/Styles';
 import Home from '../../Views/Home';
 import Notifications from '../../Views/Notifications';
 import Post from '../../Views/Post';
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    ...CommonSyles.baseShadow,
+    ...CommonStyles.baseShadow,
   },
 });
 

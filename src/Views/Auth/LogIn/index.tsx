@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {View, Image, StyleSheet} from 'react-native';
-import {CommonSyles} from '../../../Assets/Styles';
+import {CommonStyles} from '../../../Assets/Styles';
 import GradientButton from '../../../Components/Common/Button/GradientButton';
 import Input from '../../../Components/Common/Input';
 import AppText from '../../../Components/Common/Text';
@@ -36,7 +36,7 @@ const LogIn = ({navigation}: IAuthScreenProps) => {
   };
 
   return (
-    <View style={CommonSyles.mainContainer}>
+    <View style={CommonStyles.mainContainer}>
       <Image
         style={styles.backgroud}
         source={require('../../../Assets/Images/login-back.png')}
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     marginTop: '10%',
     height: '60%',
     width: '80%',
-    ...CommonSyles.transparentContainer,
+    ...CommonStyles.transparentContainer,
   },
   inputContainer: {
     marginTop: '10%',

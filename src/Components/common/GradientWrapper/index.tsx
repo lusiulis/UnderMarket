@@ -1,21 +1,32 @@
 import MaskedView from '@react-native-masked-view/masked-view';
 import {ReactElement} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { AppGradientsColors } from '../../../Assets/Styles';
+import {View} from 'react-native';
+import {AppGradientsColors} from '../../../Assets/Styles';
 
 type IGradientWrapperProps = {
   children: ReactElement;
-  childrenTransparent: ReactElement;
   style?: Object;
-  colors?: Array<string>
+  colors?: Array<string>;
 };
 
-const GradientWrapper = ({children, style, colors, childrenTransparent}: IGradientWrapperProps) => {
-  return <MaskedView maskElement={children} style={style}>
-    <LinearGradient colors={colors ? colors : AppGradientsColors.active}>
-      {childrenTransparent}
-    </LinearGradient>
-  </MaskedView>;
+const GradientWrapper = ({children, style, colors}: IGradientWrapperProps) => {
+  return (
+    <MaskedView
+      style={{flex: 1, flexDirection: 'row', height: '100%'}}
+      maskElement={
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {children}
+        </View>
+      }>
+      <LinearGradient colors={colors ? colors : AppGradientsColors.active} style={{flex: 1}} />
+    </MaskedView>
+  );
 };
 
 export default GradientWrapper;
