@@ -3,12 +3,15 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import Navigation from './src/Components/Navigation';
+import { AuthContextProvider } from './src/Contexts/app.context.provider';
 
 function App() {
   return (
-    <NavigationContainer>
-      <Navigation />
-    </NavigationContainer>
+    <AuthContextProvider>
+      <NavigationContainer>
+        <Navigation />
+      </NavigationContainer>
+    </AuthContextProvider>
   );
 }
 

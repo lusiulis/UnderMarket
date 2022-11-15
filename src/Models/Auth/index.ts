@@ -8,7 +8,7 @@ export const login = async ({username, password}: ILoginProps) => {
     return await UsersCollection.where('username', '==', username).where('password', '==', password).get().then((response) => {
         return {
             valid: response.docs.length === 1,
-            data: response.docs
+            data:response.docs[0]
         }
     })
 }

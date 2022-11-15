@@ -1,14 +1,18 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import {CommonStyles} from '../../../Assets/Styles';
 import GradientButton from '../../../Components/Common/Button/GradientButton';
 import Input from '../../../Components/Common/Input';
 import AppText from '../../../Components/Common/Text';
 import GradientText from '../../../Components/Common/Text/GradientText';
-import {IAuthScreenProps} from '../../../Components/Navigation/navigation';
 import {login} from '../../../Models/Auth';
+import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../../../Contexts/app.context.provider';
 
-const LogIn = ({navigation}: IAuthScreenProps) => {
+const LogIn = () => {
+  const navigation = useNavigation();
+  const {setAuthenticatedUser} = useContext(AuthContext)
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -25,7 +29,8 @@ const LogIn = ({navigation}: IAuthScreenProps) => {
   const handleLogIn = async () => {
     const response = await login(formData);
     if (response.valid) {
-      navigation.navigate('AppNavigation', response.data[0].id);
+      setAuthenticatedUser({id: response.data.id, profileImage: response.data.get('profileImage')?.toString()})
+      navigation.navigate('AppNavigation');
     }
   };
 
@@ -101,14 +106,19 @@ const styles = StyleSheet.create({
   },
   form: {
     marginTop: '10%',
+    paddingVertical: 30,
     height: '60%',
     width: '80%',
+    display: 'flex',
+    justifyContent: 'space-between',
     ...CommonStyles.transparentContainer,
   },
   inputContainer: {
     marginTop: '10%',
   },
   button: {
+    padding: 20,
+    borderRadius: 10,
     marginTop: '7%',
   },
   forgotText: {

@@ -1,8 +1,8 @@
 import {Camera, PhotoFile} from 'react-native-vision-camera';
-import {View, StyleSheet, GestureResponderEvent} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import AppCamera from '../../Components/Camera';
 import {IAppScreenProps} from '../../Components/Navigation/navigation';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import { AppGradientsColors, CommonStyles } from '../../Assets/Styles';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -22,7 +22,6 @@ const Post = ({navigation}: IAppScreenProps) => {
 
   const handleModalShowChange = (photo?: PhotoFile) => {
     setShowCamera(!showCamera);
-    console.log(photo);
   };
 
   const handleShowCameraModal = () => {
@@ -43,7 +42,7 @@ const Post = ({navigation}: IAppScreenProps) => {
           </View>
 
           <View style={styles.formContainer}>
-            <AppText></AppText>
+            <AppText>asd</AppText>
           </View>
         </>
       )}

@@ -1,18 +1,18 @@
-import type { NativeStackScreenProps } from '@react-navigation/stack'
+import type {NativeStackScreenProps} from '@react-navigation/stack';
 
-type AuthStackParamList = {
-    LogIn: undefined;
-    SignIn: undefined;
-    AppNavigation: {id?: string};
-}
+type StackParamList = {
+  LogIn: undefined;
+  SignIn: undefined;
+  AppNavigation: AppStackParamList;
+};
 
 type AppStackParamList = {
-    Home: undefined,
-    Search: undefined,
-    Profile: undefined,
-    Notifications: undefined
-    AppNavigation: {id?: string}
-}
+  Home: undefined;
+  Search: undefined;
+  Profile: undefined;
+  Notifications: undefined;
+  Login: undefined;
+};
 
-export type IAuthScreenProps = NativeStackScreenProps<AuthStackParamList>
-export type IAppScreenProps = NativeStackScreenProps<AppStackParamList>
+export type IScreenProps = NativeStackScreenProps<StackParamList>;
+export type IAppScreenProps = NativeStackScreenProps<AppStackParamList>;
