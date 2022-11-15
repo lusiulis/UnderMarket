@@ -61,17 +61,7 @@ const SignIn = ({navigation}: IAuthScreenProps) => {
           Registro
         </AppText>
         <View style={styles.inputsContainer}>
-          <View style={styles.accountType}>
-            <AppText font="bold" fontSize={12}>
-              Tipo de Cuenta:
-            </AppText>
-            <AppSwitch
-              value={isStore}
-              onToggle={handleToggleChange}
-              leftLabel="Normal"
-              rigthLabel="Tienda"
-            />
-          </View>
+          <GradientText font='bold' fontSize={20} style={{marginBottom: 20}}>Información de la Cuenta</GradientText>
           <Input
             value={formData.email}
             placeHolder="Correo"
@@ -107,8 +97,8 @@ const SignIn = ({navigation}: IAuthScreenProps) => {
             />
           )}
         </View>
-        <GradientButton onPress={handleSubmit}>
-          <AppText>Registrarme</AppText>
+        <GradientButton onPress={handleSubmit} style={styles.button}>
+          <AppText font='bold' fontSize={20}>Registrarme</AppText>
         </GradientButton>
       </View>
     </View>
@@ -138,6 +128,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  button: {
+    padding: 10,
+    borderRadius: 10
+  }
 });
 
 export default SignIn;

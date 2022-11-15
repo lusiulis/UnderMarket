@@ -1,3 +1,5 @@
+import {TextStyle, ViewStyle} from 'react-native'
+
 type IFont = 'normal' | 'medium' | 'bold' | 'bolder';
 
 export type IAppTextProps = {
@@ -7,12 +9,13 @@ export type IAppTextProps = {
   color?: string;
   onPress?: () => void;
   transparent?: boolean;
+  style?: TextStyle
 };
 
 export type IGradientTextProps = {
   children: string;
   colors?: string[];
-  style?: Object;
+  style?: ViewStyle;
   font?: IFont;
   fontSize?: number;
   onPress?: () => void;
