@@ -1,16 +1,18 @@
-import { View, StyleSheet } from "react-native"
-import LinearGradient from "react-native-linear-gradient"
-import { CommonSyles } from "../../Assets/Styles"
+import {View, StyleSheet} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import {CommonStyles} from '../../Assets/Styles';
+import SearchBar from '../../Components/SearchBar';
 
 const Home = () => {
   return (
-    <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']} style={styles.mainContainer}>
-        <View style={styles.container}>
-          
-        </View>
-    </LinearGradient>
-  )
-}
+    <LinearGradient
+      colors={['#1D5771', '#2A8187', '#46D9B5']}
+      style={styles.mainContainer}>
+        <SearchBar />
+        
+      </LinearGradient>
+  );
+};
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -18,20 +20,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    alignItems: 'center',
     justifyContent: 'center',
     top: 10,
     width: 350,
     height: 100,
-    ...CommonSyles.transparentContainer
+    ...CommonStyles.transparentContainer,
   },
   absoluteContainer: {
-    alignItems: 'center',
     justifyContent: 'center',
     width: 350,
     height: 100,
-    ...CommonSyles.transparentContainer
-  }
-})
+    ...CommonStyles.transparentContainer,
+  },
+});
 
-export default Home
+export default Home;

@@ -1,14 +1,18 @@
-import {useState} from 'react';
-import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {AppGradientsColors, CommonSyles} from '../../../Assets/Styles';
-import GradientButton from '../../../Components/common/Button/GradientButton';
-import Input from '../../../Components/common/Input';
-import AppText from '../../../Components/common/Text';
-import GradientText from '../../../Components/common/Text/GradientText';
-import { IAuthScreenProps } from '../../../Components/Navigation/navigation';
-import { login } from '../../../Models/Auth';
+import {useContext, useState} from 'react';
+import {View, Image, StyleSheet} from 'react-native';
+import {CommonStyles} from '../../../Assets/Styles';
+import GradientButton from '../../../Components/Common/Button/GradientButton';
+import Input from '../../../Components/Common/Input';
+import AppText from '../../../Components/Common/Text';
+import GradientText from '../../../Components/Common/Text/GradientText';
+import {login} from '../../../Models/Auth';
+import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../../../Contexts/app.context.provider';
 
-const LogIn = ({navigation}: IAuthScreenProps) => {
+const LogIn = () => {
+  const navigation = useNavigation();
+  const {setAuthenticatedUser} = useContext(AuthContext)
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -24,19 +28,20 @@ const LogIn = ({navigation}: IAuthScreenProps) => {
 
   const handleLogIn = async () => {
     const response = await login(formData);
-    console.log("Respnse: ", response)
-  }
+    if (response.valid) {
+      setAuthenticatedUser({id: response.data.id, profileImage: response.data.get('profileImage')?.toString()})
+      navigation.navigate('AppNavigation');
+    }
+  };
 
-  const handleForgotPassword = () => {
-
-  }
+  const handleForgotPassword = () => {};
 
   const handleSignIn = () => {
-    navigation.navigate('SignIn')
-  }
+    navigation.navigate('SignIn');
+  };
 
   return (
-    <View style={CommonSyles.mainContainer}>
+    <View style={CommonStyles.mainContainer}>
       <Image
         style={styles.backgroud}
         source={require('../../../Assets/Images/login-back.png')}
@@ -66,8 +71,10 @@ const LogIn = ({navigation}: IAuthScreenProps) => {
             secure
           />
         </View>
-        <GradientButton style={styles.button} onPress={handleLogIn} font='bold' fontSize={20}>
-          Iniciar Sesión
+        <GradientButton style={styles.button} onPress={handleLogIn}>
+          <AppText font="bold" fontSize={20}>
+            Iniciar Sesión
+          </AppText>
         </GradientButton>
         <GradientText
           font="bold"
@@ -99,14 +106,19 @@ const styles = StyleSheet.create({
   },
   form: {
     marginTop: '10%',
+    paddingVertical: 30,
     height: '60%',
     width: '80%',
-    ...CommonSyles.transparentContainer,
+    display: 'flex',
+    justifyContent: 'space-between',
+    ...CommonStyles.transparentContainer,
   },
   inputContainer: {
     marginTop: '10%',
   },
   button: {
+    padding: 20,
+    borderRadius: 10,
     marginTop: '7%',
   },
   forgotText: {
@@ -117,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '7%'
+    marginTop: '7%',
   },
   signinText: {
     marginLeft: '2%',

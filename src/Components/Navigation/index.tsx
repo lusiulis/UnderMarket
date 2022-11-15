@@ -1,90 +1,22 @@
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StyleSheet} from 'react-native';
-import {CommonSyles} from '../../Assets/Styles';
-import Home from '../../Views/Home';
-import Notifications from '../../Views/Notifications';
-import Post from '../../Views/Post';
-import Profile from '../../Views/Profile';
-import Search from '../../Views/Search';
-import NavigationTab from './NavigationTab';
-
-const Navbar = createBottomTabNavigator();
+import React from 'react';
+import LogIn from '../../Views/Auth/LogIn';
+import {createStackNavigator} from '@react-navigation/stack';
+import SignIn from '../../Views/Auth/SignIn';
+import AppNavigation from './AppNavigation';
 
 const Navigation = () => {
+  const Stack = createStackNavigator();
   return (
-    <Navbar.Navigator
+    <Stack.Navigator
+      initialRouteName="AppNavigation"
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.navigator,
-      }}
-      initialRouteName="Home">
-      <Navbar.Screen
-        name="Home"
-        component={Home}
-        options={{
-          tabBarIcon: ({focused, color, size}) => (
-            <NavigationTab focused={focused} value="Home" />
-          ),
-          tabBarShowLabel: false,
-        }}
-      />
-      <Navbar.Screen
-        name="Search"
-        component={Search}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <NavigationTab focused={focused} value="Search" />
-          ),
-          tabBarShowLabel: false,
-        }}
-      />
-      <Navbar.Screen
-        name="Post"
-        component={Post}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <NavigationTab focused={focused} value="Post" />
-          ),
-          tabBarShowLabel: false,
-        }}
-      />
-      <Navbar.Screen
-        name="Notifications"
-        component={Notifications}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <NavigationTab focused={focused} value="Notifications" />
-          ),
-          tabBarShowLabel: false,
-        }}
-      />
-      <Navbar.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <NavigationTab focused={focused} value="Profile" />
-          ),
-          tabBarShowLabel: false,
-        }}
-      />
-    </Navbar.Navigator>
+      }}>
+      <Stack.Screen name="LogIn" component={LogIn} />
+      <Stack.Screen name="SignIn" component={SignIn} />
+      <Stack.Screen name="AppNavigation" component={AppNavigation} />
+    </Stack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  navigator: {
-    position: 'absolute',
-    bottom: 10,
-    left: 20,
-    right: 20,
-    backgroundColor: 'white',
-    borderRadius: 15,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...CommonSyles.baseShadow,
-  },
-});
 
 export default Navigation;

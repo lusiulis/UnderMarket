@@ -1,9 +1,8 @@
 import { StyleSheet } from "react-native"
 
-export const CommonSyles = StyleSheet.create({
+export const CommonStyles = StyleSheet.create({
     mainContainer: {
         alignItems: 'center',
-        justifyContent: 'center',
         width: '100%',
         height: '100%'
     },
@@ -40,5 +39,6 @@ export const AppColors = {
 }
 
 export const AppGradientsColors = {
-    active: ['#DE2B6B', '#7D24C2']
+    active: ['#DE2B6B', '#7D24C2'],
+    base: ['#1D5771', '#2A8187', '#46D9B5']
 }

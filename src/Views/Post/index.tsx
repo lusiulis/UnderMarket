@@ -1,35 +1,98 @@
-import { View, Text, StyleSheet } from "react-native"
-import { AppColors } from "../../Assets/Styles"
+import {Camera, PhotoFile} from 'react-native-vision-camera';
+import {View, StyleSheet} from 'react-native';
+import AppCamera from '../../Components/Camera';
+import {IAppScreenProps} from '../../Components/Navigation/navigation';
+import {useState} from 'react';
+import { AppGradientsColors, CommonStyles } from '../../Assets/Styles';
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import AppText from '../../Components/Common/Text';
 
-const Post = () => {
+const cameraPermissions = async () => {
+  const cameraPermission = await Camera.getCameraPermissionStatus();
+  const microphonePermission = await Camera.getMicrophonePermissionStatus();
+
+  const newCameraPermission = await Camera.requestCameraPermission();
+  const newMicrophonePermission = await Camera.requestMicrophonePermission();
+};
+
+const Post = ({navigation}: IAppScreenProps) => {
+  cameraPermissions();
+  const [showCamera, setShowCamera] = useState(true);
+
+  const handleModalShowChange = (photo?: PhotoFile) => {
+    setShowCamera(!showCamera);
+  };
+
+  const handleShowCameraModal = () => {
+    setShowCamera(!showCamera)
+  }
+
   return (
-    <View style={styles.mainContainer}>
-        <Text>Post View aaa</Text>
-        <View style={styles.container}>
-          
-        </View>
-    </View>
-  )
-}
+    <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']} style={[CommonStyles.mainContainer, styles.mainContainer]}>
+      {showCamera ? (
+        <AppCamera handleShow={handleModalShowChange} />
+      ) : (
+        <>
+          <View style={styles.cameraWidgetContainer}>
+            <LinearGradient colors={AppGradientsColors.active} style={styles.cameraWidgetBlob1} />
+            <LinearGradient colors={AppGradientsColors.active} style={styles.cameraWidgetBlob2} />
+            <LinearGradient colors={AppGradientsColors.active} style={styles.cameraWidgetBlob3} />
+            <Icon name='camera' size={50} style={styles.camera} color='black' onPress={handleShowCameraModal} />
+          </View>
+
+          <View style={styles.formContainer}>
+            <AppText>asd</AppText>
+          </View>
+        </>
+      )}
+    </LinearGradient>
+  );
+};
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: AppColors.turquoise
+    paddingTop: '10%'
   },
-  container: {
+  formContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3);',
+    width: '90%',
+  },
+  cameraWidgetContainer: {
+    display: 'flex',
+    width: '80%',
+    height: '20%',
+    backgroundColor: 'rgba(0, 0, 0, 0.3);',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: "white",
-    width: 350,
-    height: 100,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    borderRadius: 40,
+  },
+  cameraWidgetBlob1: {
+    height: '90%',
+    width: '40%',
     borderRadius: 10,
+    transform: [{ rotate: '15deg' }]
   },
-  absoluteContainer: {
-    
+  cameraWidgetBlob2: {
+    height: '90%',
+    width: '40%',
+    borderRadius: 10,
+    transform: [{ rotate: '15deg' }, { translateX: -20}]
+  },
+  cameraWidgetBlob3: {
+    height: '90%',
+    width: '40%',
+    borderRadius: 10,
+    transform: [{ rotate: '15deg' }, { translateX: -50}]
+  },
+  camera: {
+    position: 'absolute',
+    padding: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.3);',
+    borderRadius: 100,
+    left: '40%'
   }
 })
 
-export default Post
+export default Post;

@@ -1,12 +1,21 @@
 import { createContext, ReactElement } from 'react';
-import { useAppContext } from '../Hooks/useAppContext';
+import { IAuthContext, IAuthProfile } from '../Hooks/auth';
+import { useAuthContext } from '../Hooks/auth/useAuthContext';
 
-export const AppContext = createContext({});
-export const RewardsContextProvider = (props: ReactElement) => {
-  const appContext = useAppContext();
+type IAuthContextProps = {
+  children: ReactElement
+}
+
+export const AuthContext = createContext<IAuthContext>({
+  authState: {isAunthenticated: false},
+  setAuthenticatedUser: () => {},
+  logOut: () => {}
+});
+export const AuthContextProvider = ({children}: IAuthContextProps) => {
+  const appContext = useAuthContext();
   return (
-    <AppContext.Provider value={{ appContext }}>
-      {props}
-    </AppContext.Provider>
+    <AuthContext.Provider value={ appContext }>
+      {children}
+    </AuthContext.Provider>
   );
 };
