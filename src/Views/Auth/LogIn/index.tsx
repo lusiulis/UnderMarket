@@ -66,12 +66,10 @@ const LogIn = ({navigation}: IAuthScreenProps) => {
             secure
           />
         </View>
-        <GradientButton
-          style={styles.button}
-          onPress={handleLogIn}
-          font="bold"
-          fontSize={20}>
-          Iniciar Sesión
+        <GradientButton style={styles.button} onPress={handleLogIn}>
+          <AppText font="bold" fontSize={20}>
+            Iniciar Sesión
+          </AppText>
         </GradientButton>
         <GradientText
           font="bold"

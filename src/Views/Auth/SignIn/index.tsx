@@ -107,8 +107,8 @@ const SignIn = ({navigation}: IAuthScreenProps) => {
             />
           )}
         </View>
-        <GradientButton onPress={handleSubmit} font="bold" fontSize={20}>
-          Registrarme
+        <GradientButton onPress={handleSubmit}>
+          <AppText>Registrarme</AppText>
         </GradientButton>
       </View>
     </View>

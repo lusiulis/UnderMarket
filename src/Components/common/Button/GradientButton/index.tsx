@@ -1,36 +1,31 @@
-import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {ReactElement} from 'react';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { AppGradientsColors } from '../../../../Assets/Styles';
-import AppText from '../../Text';
-import { IFont } from '../../Text/text';
+import {AppGradientsColors} from '../../../../Assets/Styles';
 
 type IGradientButtonProps = {
-    loading?: boolean;
-    disabled?: boolean;
-    colors?: Array<string>;
-    style?: Object;
-    children: string;
-    onPress: () => void;
-    font?: IFont;
-    fontSize?: number;
-    color?: string;
-}
+  loading?: boolean;
+  disabled?: boolean;
+  colors?: Array<string>;
+  style?: Object;
+  children: ReactElement;
+  onPress: () => void;
+};
 
-const GradientButton = ({colors, children, style, onPress, font, fontSize, color}: IGradientButtonProps) => {
+const GradientButton = ({
+  colors,
+  children,
+  style,
+  onPress,
+  disabled
+}: IGradientButtonProps) => {
   return (
-    <TouchableOpacity style={style} onPress={onPress}>
-      <LinearGradient colors={colors ? colors : AppGradientsColors.active} style={styles.greadientContainer}>
-          <AppText font={font} fontSize={fontSize} color={color}>{children}</AppText>
-      </LinearGradient>
-    </TouchableOpacity>
-  )
-}
+    <LinearGradient
+      style={style}
+      colors={colors ? colors : AppGradientsColors.active}>
+      <TouchableOpacity disabled={disabled} onPress={onPress}>{children}</TouchableOpacity>
+    </LinearGradient>
+  );
+};
 
-const styles = StyleSheet.create({
-    greadientContainer: {
-        padding: 20,
-        borderRadius: 10
-    }
-})
-
-export default GradientButton
+export default GradientButton;

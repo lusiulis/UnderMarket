@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native"
 export const CommonStyles = StyleSheet.create({
     mainContainer: {
         alignItems: 'center',
-        justifyContent: 'center',
         width: '100%',
         height: '100%'
     },
