@@ -9,7 +9,7 @@ const AppFonts = {
   bolder: 'Montserrat-ExtraBold',
 };
 
-const AppText = ({children, font, fontSize, color, onPress, transparent}: IAppTextProps) => {
+const AppText = ({children, font, fontSize, color, onPress, transparent, style}: IAppTextProps) => {
   const styles = StyleSheet.create({
     textStyle: {
       fontFamily: AppFonts[font ? font : 'normal'],
@@ -19,7 +19,7 @@ const AppText = ({children, font, fontSize, color, onPress, transparent}: IAppTe
     },
   });
   return (
-    <Text onPress={onPress} style={styles.textStyle}>
+    <Text onPress={onPress} style={[styles.textStyle, style]}>
       {children}
     </Text>
   );
