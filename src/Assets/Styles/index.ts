@@ -24,6 +24,18 @@ export const CommonStyles = StyleSheet.create({
     mt_2 : {
         marginTop: 20
     },
+    pt_1 : {
+        paddingTop: 10
+    },
+    pt_2 : {
+        paddingTop: 20
+    },
+    pl_1 : {
+        paddingLeft: 10
+    },
+    pAll: {
+        padding: 10
+    },
     baseText: {
         fontFamily: 'Montserrat'
     }

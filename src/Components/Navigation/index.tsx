@@ -3,6 +3,7 @@ import LogIn from '../../Views/Auth/LogIn';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignIn from '../../Views/Auth/SignIn';
 import AppNavigation from './AppNavigation';
+import ProfileShop from '../../Views/ProfileShop';
 
 const Navigation = () => {
   const Stack = createStackNavigator();
@@ -15,6 +16,8 @@ const Navigation = () => {
       <Stack.Screen name="LogIn" component={LogIn} />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="AppNavigation" component={AppNavigation} />
+      <Stack.Screen name="ProfileShop" component={ProfileShop} />
+
     </Stack.Navigator>
   );
 };
