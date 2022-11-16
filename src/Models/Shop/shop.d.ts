@@ -10,6 +10,11 @@ export type IShop = {
   networks: Array<ISocialNetwork>;
 };
 
+export type IShopLight = {
+  id: string;
+  name: string;
+}
+
 export type IAddShop = {
   address: string;
   phoneNumber: string;
