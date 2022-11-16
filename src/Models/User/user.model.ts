@@ -1,7 +1,8 @@
-import {IAddUser} from './user';
+import firestore from '@react-native-firebase/firestore'
 
-const validateFields = () => {};
+const ShopColletion = firestore().collection('shop')
+const UserCollection = firestore().collection('user')
 
-export const validateUsername = (username: string) => {};
-
-export const addUser = async (payload: IAddUser) => {};
+export const getUserShops = async (id: string) => {
+    
+}

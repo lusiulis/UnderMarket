@@ -1,15 +1,16 @@
-import { IAddShop } from './shop'
-import uuid from 'react-native-uuid'
-import firestore from '@react-native-firebase/firestore'
+import {IAddShop, IShop, IShopLight} from './shop';
+import uuid from 'react-native-uuid';
+import firestore from '@react-native-firebase/firestore';
 
-const shopColletion = firestore().collection('Users')
+const shopColletion = firestore().collection('shop');
 
-export const addShop = async (payload: IAddShop) => await shopColletion.add({
+export const addShop = async (payload: IAddShop) =>
+  await shopColletion.add({
     id: uuid.v4(),
-    ...payload
-})
+    ...payload,
+  });
 
-export const getShop = async (id: string) => {
-    if(!uuid.validate(id)) return;
-    return shopColletion.where().
-}
+export const getUserShops = async (id: string): Promise<IShopLight[]> => {
+  const response = await shopColletion.where('userId', '==', id).get();
+  return response.docs.map(doc => ({id: doc.id, name: doc.get('name')}));
+};
