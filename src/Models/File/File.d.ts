@@ -1,4 +1,4 @@
 export type IAddFile = {
-    imageUrl: URL;
+    imageUrl: string;
     contentId: string;
 }
