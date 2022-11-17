@@ -8,9 +8,8 @@ import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomSheet } from 'react-native-btr';
-import { Icon } from '@rneui/themed';
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { getUserById } from '../../Models/User/user.model';
+import { getUserShops } from '../../Models/Shop/shop.model';
 
 
 const Profile = () => {
@@ -18,6 +17,20 @@ const Profile = () => {
   const navigation = useNavigation();
   const defaultImage = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
   const [showCamera, setShowCamera] = useState(true);
+  const [shopId, setShopId] = useState('');
+
+  useEffect(() => {
+    getShop();
+  })
+
+  const getShop = async () => {
+    const shops = await getUserShops(String(authState.profile?.id))
+    if (shops.length > 0) {
+      setShopId(shops[0].id)
+    } else {
+      setShopId('');
+    }
+  }
 
   const handleRegister = () => {
     navigation.navigate('LogIn')
@@ -32,11 +45,11 @@ const Profile = () => {
     setShowCamera(!showCamera)
   }
 
-  const showShop = () =>{
-    if(authState.profile?.shopId){
-      navigation.navigate('ProfileShop')
-    }else{
-
+  const showShop = () => {
+    if (shopId != '') {
+      navigation.navigate('ShopsList')
+    } else {
+      navigation.navigate('NewShop')
     }
   }
 
@@ -48,11 +61,11 @@ const Profile = () => {
             colors={['#1D5771', '#2A8187', '#46D9B5']}
             style={styles.container}>
             <View style={styles.right}>
-              <Icon
-                reverse
+              <Icons
+                size={25}
                 name='menu'
-                type='ionicon'
-                color='#F0F0F014'
+                style={styles.iconMenu}
+                color='#ffff'
                 onPress={toggleBottomNavigationView} />
             </View>
             <View>
@@ -64,7 +77,7 @@ const Profile = () => {
                   }}
                   style={styles.imageStyle}
                 />
-                <Icons name='camera-enhance' size={50} style={styles.camera} color='black' onPress={handleShowCameraModal} />
+                <Icons name='camera-enhance' size={40} style={styles.camera} color='black' onPress={handleShowCameraModal} />
 
               </View>
               <View style={styles.content}>
@@ -102,7 +115,7 @@ const Profile = () => {
 
                   <GradientButton colors={['#ffff', '#ffff']} onPress={showShop} style={styles.button}>
                     <AppText color={'black'} fontSize={20} font="bold">
-                      {authState.profile?.shopId ? 'Ver Tienda' : 'Crear Tienda'}
+                      {shopId != '' ? 'Mis Tiendas' : 'Crear Tienda'}
                     </AppText>
 
                   </GradientButton>
@@ -145,6 +158,11 @@ const styles = StyleSheet.create({
   link: {
     marginTop: 20,
     textDecorationLine: "underline"
+  },
+  iconMenu: {
+    borderRadius: 50,
+    backgroundColor: 'rgba(0, 0, 0, 0.3);',
+    padding: 3
   },
   camera: {
     padding: 3,

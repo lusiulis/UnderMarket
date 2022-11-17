@@ -1,17 +1,33 @@
 type ISocialNetwork = {
-  network: 'INSTAGRAM' | 'FACEBOOK' | 'PERSONAL';
-  link: URL;
+  network: 'INSTAGRAM' | 'FACEBOOK';
+  link: string;
 };
 
 export type IShop = {
   id: string;
-  address: string;
-  phoneNumber: string;
-  networks: Array<ISocialNetwork>;
+  name: string;
+  description: string;
+  userId: string;
+  address?: string;
+  phoneNumber?: string;
+  networks?: Array<ISocialNetwork>;
+  photo?: String;
 };
 
-export type IAddShop = {
-  address: string;
+export type IShopLight = {
+  id: string;
+  name: string;
+  description: string;
+  photo?: String;
   phoneNumber: string;
-  networks: Array<ISocialNetwork>;
+}
+
+export type IAddShop = {
+  photo?: String;
+  name: string;
+  description: string;
+  userId: string;
+  address?: string;
+  phoneNumber: string;
+  networks?: Array<ISocialNetwork>;
 };

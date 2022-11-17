@@ -1,15 +1,29 @@
-import { IAddShop } from './shop'
-import uuid from 'react-native-uuid'
-import firestore from '@react-native-firebase/firestore'
+import {IAddShop, IShop, IShopLight, ISocialNetwork} from './shop';
+import uuid from 'react-native-uuid';
+import firestore from '@react-native-firebase/firestore';
 
-const shopColletion = firestore().collection('Users')
+const shopColletion = firestore().collection('shop');
 
-export const addShop = async (payload: IAddShop) => await shopColletion.add({
+export const addShop = async (payload: IAddShop) =>
+  await shopColletion.add({
     id: uuid.v4(),
-    ...payload
-})
+    ...payload,
+  });
 
-export const getShop = async (id: string) => {
-    if(!uuid.validate(id)) return;
-    return shopColletion.where().
+export const getUserShops = async (id: string): Promise<IShopLight[]> => {
+  const response = await shopColletion.where('userId', '==', id).get();
+  return response.docs.map(doc => ({id: doc.id, name: doc.get('name'),description: doc.get('description'), phoneNumber: doc.get('phoneNumber')}));
+};
+
+export const createShop = async (payload: IAddShop, networks?:Array<ISocialNetwork>) =>{
+  if(payload.address === ''){
+    delete payload.address;
+  }
+  if(payload.photo === ''){
+    delete payload.photo;
+  }
+  if(networks?.length === 0){
+    delete payload.networks;
+  }
+  return await shopColletion.add({...payload, networks});
 }

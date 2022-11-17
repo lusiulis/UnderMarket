@@ -21,6 +21,9 @@ export const CommonStyles = StyleSheet.create({
     mt_1 : {
         marginTop: 10
     },
+    mb_1 : {
+        marginBottom: 10
+    },
     mt_2 : {
         marginTop: 20
     },

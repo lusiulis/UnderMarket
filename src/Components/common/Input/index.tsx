@@ -50,7 +50,6 @@ const Input = ({
     textInput: {
       color: color ? color : 'white',
       fontFamily: 'Montserrat-Regular',
-      marginLeft: 10,
       width: '70%',
     },
     error: {
@@ -64,13 +63,14 @@ const Input = ({
     <View>
       <View
         style={[
+          {backgroundColor: backgroundColor? backgroundColor : ''},
           styles.wrapper,
           {alignItems: icon ? 'center' : 'baseline'},
           {borderColor: getBorderColor(), flexDirection: 'row'},
         ]}>
         <View>
           {icon && (
-            <Icon name={icon} size={18} color={color ? color : 'white'} />
+            <Icon name={icon} size={18} color={color ? color : 'white'} style={{marginRight: 10}} />
           )}
         </View>
         <TextInput

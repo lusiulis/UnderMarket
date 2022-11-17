@@ -3,7 +3,6 @@ export type IAuthProfile = {
   profileImage?: string;
   username: string;
   email: string;
-  shopId?: string;
 };
 
 export type IAuthState = {

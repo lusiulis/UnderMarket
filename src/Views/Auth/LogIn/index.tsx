@@ -29,7 +29,7 @@ const LogIn = () => {
   const handleLogIn = async () => {
     const response = await login(formData);
     if (response.valid) {
-      setAuthenticatedUser({id: response.data.id, profileImage: response.data.get('profileImage')?.toString(), username: response.data.get('username'), email: response.data.get('email'), shopId:  response.data.get('shopId')?.toString() })
+      setAuthenticatedUser({id: response.data.id, profileImage: response.data.get('profileImage')?.toString(), username: response.data.get('username'), email: response.data.get('email') })
       navigation.navigate('AppNavigation');
     }
   };

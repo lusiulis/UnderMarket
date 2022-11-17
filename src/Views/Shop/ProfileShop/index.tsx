@@ -1,13 +1,14 @@
-import { useContext, useState } from "react"
-import { View, Text, StyleSheet, Image } from "react-native"
+import { useContext, useEffect, useState } from "react"
+import { View, Text, StyleSheet, Image, TouchableOpacity, Linking } from "react-native"
 import LinearGradient from "react-native-linear-gradient"
-import Home from "../Home"
-import Search from "../Search"
+import Home from "../../Home"
+import Search from "../../Search"
 import { useNavigation } from '@react-navigation/native';
-import { CommonStyles } from "../../Assets/Styles"
-import AppText from "../../Components/Common/Text"
-import GradientButton from "../../Components/Common/Button/GradientButton"
-import { AuthContext } from "../../Contexts/app.context.provider"
+import { CommonStyles } from "../../../Assets/Styles"
+import AppText from "../../../Components/Common/Text"
+import GradientButton from "../../../Components/Common/Button/GradientButton"
+import { AuthContext } from "../../../Contexts/app.context.provider"
+import { getUserShops } from "../../../Models/Shop/shop.model"
 
 //const Tab = createMaterialTopTabNavigator();
 
@@ -15,6 +16,44 @@ const ProfileShop = () => {
   const { authState } = useContext(AuthContext);
   const navigation = useNavigation();
   const defaultImage = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
+  const [loading, setLoading] = useState(true);
+  const [shop, setShop] = useState({ name: '', description: '', phonenumber: '' })
+
+  useEffect(() => {
+    if (loading) {
+      getShop();
+    }
+  })
+
+  const getShop = async () => {
+    const shops = await getUserShops(String(authState.profile?.id))
+    if (shops.length > 0) {
+      setShop({ name: shops[0].name, description: shops[0].description, phonenumber: shops[0].phoneNumber })
+      setLoading(false)
+    }
+  }
+  const openNetworks = (data: string) => {
+    if (data == 'whatsapp') {
+      Linking.openURL(`https://wa.me/{shops[0].phoneNumber.replace('+','')}`);
+    }
+  }
+  const getNetworks = () => {
+    return (
+      <>
+        {shop.phonenumber &&
+          <TouchableOpacity onPress={() => openNetworks('whatsapp')}>
+            <Image
+              style={[styles.iconsNetworks, CommonStyles.mt_1]}
+              source={require('../../../Assets/Icons/whatsapp.png')}
+            />
+          </TouchableOpacity>
+
+        }
+
+      </>
+
+    )
+  }
 
   return (
     <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']} style={styles.container}>
@@ -37,8 +76,9 @@ const ProfileShop = () => {
 
       </View>
       <View style={[CommonStyles.pt_1, CommonStyles.pl_1]}>
-        <AppText font='bolder' fontSize={18}>Boutique A&R</AppText>
-        <Text style={styles.description}>Es una tienda de ropa para damas con los mejores productos</Text>
+        <AppText font='bolder' fontSize={18}>{shop.name}</AppText>
+        <Text style={styles.description}>{shop.description}</Text>
+        {getNetworks()}
       </View>
       <View style={styles.form}>
         <GradientButton onPress={() => null} style={styles.button}>
@@ -49,14 +89,19 @@ const ProfileShop = () => {
       </View>
 
       <AppText fontSize={16} font="bold" >
-            la cartaaaaa de contenidoooooooos faltaaaaaaaa
-          </AppText>
+        la cartaaaaa de contenidoooooooos faltaaaaaaaa
+      </AppText>
 
     </LinearGradient>
   )
 }
 
 const styles = StyleSheet.create({
+  iconsNetworks: {
+    borderRadius: 50,
+    width: 35,
+    height: 35
+  },
   button: {
     padding: 8,
     borderRadius: 10
@@ -81,8 +126,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 50,
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     backgroundColor: "white"
   },
   description: {
@@ -93,5 +138,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default ProfileShop
-
+export default ProfileShop;
