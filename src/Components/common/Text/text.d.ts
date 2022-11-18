@@ -9,7 +9,8 @@ export type IAppTextProps = {
   color?: string;
   onPress?: () => void;
   transparent?: boolean;
-  style?: TextStyle
+  style?: TextStyle;
+  maxLines?: number
 };
 
 export type IGradientTextProps = {

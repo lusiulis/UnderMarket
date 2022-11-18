@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AppText from '../../Components/Common/Text';
 import {ICameraFile} from '../../Components/Camera/Camera';
-import {AuthContext} from '../../Contexts/app.context.provider';
+import {AuthContext} from '../../Contexts/appContentProvider';
 import AuthWidget from '../../Components/Widgets/AuthWIdget';
 import GradientWrapper from '../../Components/Common/GradientWrapper';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -22,6 +22,8 @@ import {getAllDivitions} from '../../Models/Category';
 import {addContent} from '../../Models/Content';
 import GradientText from '../../Components/Common/Text/GradientText';
 import {UploadImage} from '../../Utils';
+import {Picker} from '@react-native-picker/picker';
+import {IShopLight} from '../../Models/Shop/shop';
 
 const cameraPermissions = async () => {
   const cameraPermission = await Camera.getCameraPermissionStatus();
@@ -36,7 +38,6 @@ type IFormPost = {
   title: string;
   description: string;
   contentType: IContentType;
-  shopId: string;
   price: number;
 };
 const Post = ({navigation}: IScreenProps) => {
@@ -48,27 +49,36 @@ const Post = ({navigation}: IScreenProps) => {
     title: '',
     description: '',
     contentType: 'product',
-    shopId: '',
     price: 0,
   });
   const isMounted = useRef(false);
+  const [userShops, setUserShops] = useState<IShopLight[]>([]);
   const [divitions, setDivitons] = useState<IDivition[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const [selectedShop, setSelectedShop] = useState<IShopLight>({
+    id: '',
+    name: '',
+  });
 
-  const fetchStoresData = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     if (isMounted) {
       const divitions = await getAllDivitions();
+      const shops = authState.profile?.id
+        ? await getUserShops(authState.profile.id)
+        : [];
+      setUserShops(shops);
+      if(shops[0]) setSelectedShop(shops[0])
       setDivitons(divitions);
     }
   }, []);
 
   useEffect(() => {
     isMounted.current = true;
-    fetchStoresData();
+    fetchData();
     return () => {
       isMounted.current = false;
     };
-  }, []);
+  }, [authState.profile?.id]);
 
   const handleModalShowChange = (files?: ICameraFile[]) => {
     if (files) setFormData({...formData, media: [...formData.media, ...files]});
@@ -95,10 +105,8 @@ const Post = ({navigation}: IScreenProps) => {
     setFormData({...formData, price: Number(value)});
   };
 
-  const handleDivitionChange = (value: string) => {
-    console.log(value);
-
-    return;
+  const handleShopChange = (value: IShopLight) => {
+    setSelectedShop(value);
   };
 
   const handleCancel = () => {
@@ -108,7 +116,6 @@ const Post = ({navigation}: IScreenProps) => {
       title: '',
       description: '',
       contentType: 'product',
-      shopId: '',
       price: 0,
     });
     navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Home');
@@ -119,18 +126,19 @@ const Post = ({navigation}: IScreenProps) => {
       authState.profile?.id &&
       formData.title.length > 0 &&
       formData.description.length > 0 &&
-      formData.media.length > 0
+      formData.media.length > 0 &&
+      selectedShop
     ) {
       const uploadedImages = await Promise.all(
         formData.media.map(async media => await UploadImage(media)),
       );
       const response = await addContent({
-        userId: authState.profile.id,
+        shopId: selectedShop.id,
         title: formData.title,
         description: formData.description,
         price: formData.price,
         contentType: 'image',
-        filesUrl: uploadedImages,
+        files: uploadedImages,
         categoryId: 'naXbY13cwqRc06vUhvFf',
       });
       console.log(response);
@@ -207,7 +215,7 @@ const Post = ({navigation}: IScreenProps) => {
 
   const PostForm = () => (
     <View style={styles.formContainer}>
-      <AppText font="bold" fontSize={15}>
+      <AppText font="bold" fontSize={17}>
         Información de Publicación
       </AppText>
       <View style={styles.inputsContainer}>
@@ -226,9 +234,9 @@ const Post = ({navigation}: IScreenProps) => {
           style={styles.formInputs}
         />
         <View style={styles.priceContainer}>
-          <GradientText font="bold" fontSize={15}>
+          <AppText font="bold" fontSize={15}>
             Precio:
-          </GradientText>
+          </AppText>
           <Input
             value={formData.price}
             onChange={handlePriceInputChange}
@@ -236,6 +244,18 @@ const Post = ({navigation}: IScreenProps) => {
             placeHolder="Precio"
             style={styles.priceInput}
           />
+        </View>
+        <View style={{backgroundColor: 'rgba(0,0,0,0.4)', borderRadius: 20, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+          <AppText style={{marginLeft: 10}} font='bold' fontSize={15}>Tienda: </AppText>
+          <Picker
+            selectedValue={selectedShop}
+            onValueChange={itemValue => handleShopChange(itemValue)}
+            placeholder="No hay tiendas..."
+            style={{color: 'white', width: '70%'}}>
+            {userShops.map((shop, index) => (
+              <Picker.Item key={index} label={shop.name} value={shop} />
+            ))}
+          </Picker>
         </View>
       </View>
     </View>
@@ -279,12 +299,12 @@ const Post = ({navigation}: IScreenProps) => {
               style={[
                 styles.button,
                 {
-                  backgroundColor: 'rgba(194, 26, 26, 1)',
+                  backgroundColor: 'white',
                 },
               ]}>
-              <AppText font="bold" fontSize={20}>
+              <GradientText font="bold" fontSize={20}>
                 Cancelar
-              </AppText>
+              </GradientText>
             </TouchableOpacity>
             <GradientButton onPress={submitForm} style={styles.button}>
               <AppText font="bold" fontSize={20}>

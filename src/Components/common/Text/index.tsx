@@ -9,7 +9,7 @@ const AppFonts = {
   bolder: 'Montserrat-ExtraBold',
 };
 
-const AppText = ({children, font, fontSize, color, onPress, transparent, style}: IAppTextProps) => {
+const AppText = ({children, font, fontSize, color, onPress, transparent, style, maxLines}: IAppTextProps) => {
   const styles = StyleSheet.create({
     textStyle: {
       fontFamily: AppFonts[font ? font : 'normal'],
@@ -19,7 +19,7 @@ const AppText = ({children, font, fontSize, color, onPress, transparent, style}:
     },
   });
   return (
-    <Text onPress={onPress} style={[styles.textStyle, style]}>
+    <Text onPress={onPress} style={[styles.textStyle, style]} numberOfLines={maxLines}>
       {children}
     </Text>
   );

@@ -3,7 +3,7 @@ import {View, StyleSheet, Image} from 'react-native';
 import {AppColors} from '../../Assets/Styles';
 import GradientButton from '../../Components/Common/Button/GradientButton';
 import AppText from '../../Components/Common/Text';
-import {AuthContext} from '../../Contexts/app.context.provider';
+import {AuthContext} from '../../Contexts/appContentProvider';
 import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {

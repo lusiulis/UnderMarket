@@ -7,7 +7,7 @@ import AppText from '../../../Components/Common/Text';
 import GradientText from '../../../Components/Common/Text/GradientText';
 import {login} from '../../../Models/Auth';
 import { useNavigation } from '@react-navigation/native';
-import { AuthContext } from '../../../Contexts/app.context.provider';
+import { AuthContext } from '../../../Contexts/appContentProvider';
 
 const LogIn = () => {
   const navigation = useNavigation();
