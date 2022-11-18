@@ -1,4 +1,5 @@
-import { IAddFile } from "../File/File";
+import type { IPaginationPayload } from "..";
+import type { IAddFile } from "../File/File";
 
 export type IContentType = 'product' | 'publicity'
 
@@ -17,10 +18,11 @@ export type IAddContentPayload = {
     categoryId: string;
     price: number;
     contentType: 'image' | 'video'
-    filesUrl: URL[]
+    filesUrl: string[]
 }
 
 export type IGetContentsPayload = {
-    
+    userId: string;
+    pagination: IPaginationPayload
 }
 
