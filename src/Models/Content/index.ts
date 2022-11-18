@@ -11,5 +11,6 @@ export const addContent = async ({filesUrl, ...content}: IAddContentPayload): Pr
 }
 
 export const getContents = async({}: IGetContentsPayload): Promise<IContent[]> => {
+    
     return []
 }
