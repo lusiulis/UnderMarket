@@ -6,8 +6,10 @@ import LinearGradient from 'react-native-linear-gradient';
 import {AppGradientsColors} from '../../../../Assets/Styles';
 import {HomeContext} from '../../../../Contexts/homeContextProvider';
 import {IContent, IContentCard} from '../../../../Models/Content/Content';
+import AppModal from '../../../Common/AppModal';
 import AppText from '../../../Common/Text';
 import ProfileIcon from '../../../Snippets/ProfileIcon';
+import ContentDetail from '../ContentDetail';
 
 type IContentListProps = {
   contents: IContentCard[];
@@ -17,13 +19,19 @@ type IContentListProps = {
 
 const ContentList = ({contents, style}: IContentListProps) => {
   const [selectedContent, setSelectedContent] = useState<IContentCard>();
+  const [showCardModal, setShowCardModal] = useState(false);
 
   const getFormatedImages = (files?: any[]) =>
     files ? files.map((file: any) => ({img: file})) : [];
 
   const handlePressCard = (card: IContentCard) => {
     setSelectedContent(card);
+    setShowCardModal(!showCardModal)
   };
+
+  const handleCardCancel = () => {
+    setShowCardModal(!showCardModal)
+  }
 
   return (
     <View style={styles.main}>
@@ -73,6 +81,7 @@ const ContentList = ({contents, style}: IContentListProps) => {
           ))}
         </View>
       </ScrollView>
+      <ContentDetail show={showCardModal} content={selectedContent} hide={handleCardCancel} />
     </View>
   );
 };
