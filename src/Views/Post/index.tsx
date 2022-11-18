@@ -7,15 +7,23 @@ import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AppText from '../../Components/Common/Text';
 import {ICameraFile} from '../../Components/Camera/Camera';
-import {AuthContext} from '../../Contexts/app.context.provider';
+import {AuthContext} from '../../Contexts/appContentProvider';
 import AuthWidget from '../../Components/Widgets/AuthWIdget';
 import GradientWrapper from '../../Components/Common/GradientWrapper';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import GradientButton from '../../Components/Common/Button/GradientButton';
 import Input from '../../Components/Common/Input';
-import { IContentType } from '../../Models/Content/Content';
+import {IContentType} from '../../Models/Content/Content';
 import AppSelect from '../../Components/Common/Input/Select';
-import { getUserShops } from '../../Models/Shop/shop.model';
+import {getUserShops} from '../../Models/Shop/shop.model';
+import {IScreenProps} from '../../Components/Navigation/navigation';
+import {ICategory, IDivition} from '../../Models/Category/Category';
+import {getAllDivitions} from '../../Models/Category';
+import {addContent} from '../../Models/Content';
+import GradientText from '../../Components/Common/Text/GradientText';
+import {UploadImage} from '../../Utils';
+import {Picker} from '@react-native-picker/picker';
+import {IShopLight} from '../../Models/Shop/shop';
 
 const cameraPermissions = async () => {
   const cameraPermission = await Camera.getCameraPermissionStatus();
@@ -30,10 +38,9 @@ type IFormPost = {
   title: string;
   description: string;
   contentType: IContentType;
-  shopId: string;
-}
-
-const Post = () => {
+  price: number;
+};
+const Post = ({navigation}: IScreenProps) => {
   cameraPermissions();
   const {authState} = useContext(AuthContext);
   const [showCamera, setShowCamera] = useState(true);
@@ -42,23 +49,39 @@ const Post = () => {
     title: '',
     description: '',
     contentType: 'product',
-    shopId: '',
+    price: 0,
   });
-  const isMounted = useRef(false)
+  const isMounted = useRef(false);
+  const [userShops, setUserShops] = useState<IShopLight[]>([]);
+  const [divitions, setDivitons] = useState<IDivition[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [selectedShop, setSelectedShop] = useState<IShopLight>({
+    id: '',
+    name: '',
+  });
 
-  const fetchStoresData = useCallback(async () => {
-    if(isMounted && authState.profile?.id) {
-      const userStores = getUserShops(authState.profile.id);
-      console.log('stores: ', userStores)
+  const fetchData = useCallback(async () => {
+    if (isMounted) {
+      const divitions = await getAllDivitions();
+      const shops = authState.profile?.id
+        ? await getUserShops(authState.profile.id)
+        : [];
+      setUserShops(shops);
+      if(shops[0]) setSelectedShop(shops[0])
+      setDivitons(divitions);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-
-  }, )
+    isMounted.current = true;
+    fetchData();
+    return () => {
+      isMounted.current = false;
+    };
+  }, [authState.profile?.id]);
 
   const handleModalShowChange = (files?: ICameraFile[]) => {
-    if (files) setFormData({ ...formData, media: [...formData.media, ...files]});
+    if (files) setFormData({...formData, media: [...formData.media, ...files]});
     setShowCamera(!showCamera);
   };
 
@@ -69,16 +92,61 @@ const Post = () => {
   const removeMediaElement = (index: number) => {
     const newMedia = formData.media;
     newMedia.splice(index, 1);
-    setFormData({ ...formData, media: [...newMedia] });
+    setFormData({...formData, media: [...newMedia]});
   };
 
-  const handleInputChange = (value: string) => {
-    
-  }
+  const handleTitleInputChange = (value: string) => {
+    setFormData({...formData, title: value});
+  };
+  const handleDescriptionInputChange = (value: string) => {
+    setFormData({...formData, description: value});
+  };
+  const handlePriceInputChange = (value: string) => {
+    setFormData({...formData, price: Number(value)});
+  };
 
-  const submitForm = () => {
+  const handleShopChange = (value: IShopLight) => {
+    setSelectedShop(value);
+  };
 
-  }
+  const handleCancel = () => {
+    console.log('entra');
+    setFormData({
+      media: [],
+      title: '',
+      description: '',
+      contentType: 'product',
+      price: 0,
+    });
+    navigation.canGoBack() ? navigation.goBack() : navigation.navigate('Home');
+  };
+
+  const submitForm = async () => {
+    if (
+      authState.profile?.id &&
+      formData.title.length > 0 &&
+      formData.description.length > 0 &&
+      formData.media.length > 0 &&
+      selectedShop
+    ) {
+      const uploadedImages = await Promise.all(
+        formData.media.map(async media => await UploadImage(media)),
+      );
+      const response = await addContent({
+        shopId: selectedShop.id,
+        title: formData.title,
+        description: formData.description,
+        price: formData.price,
+        contentType: 'image',
+        files: uploadedImages,
+        categoryId: 'naXbY13cwqRc06vUhvFf',
+      });
+      console.log(response);
+    } else {
+      console.log('invalid form');
+      console.log(formData);
+    }
+  };
 
   const PostImages = () => (
     <View style={styles.imagesShadowContainer}>
@@ -147,10 +215,49 @@ const Post = () => {
 
   const PostForm = () => (
     <View style={styles.formContainer}>
-      <AppText font='bold' fontSize={15}>Información de Publicación</AppText>
-      <Input value={formData.title} onChange={handleInputChange} placeHolder='Titulo del Producto' style={styles.formInputs} />
-      <Input value={formData.description} onChange={handleInputChange} placeHolder='Descripción del Producto' style={styles.formInputs} />
-      
+      <AppText font="bold" fontSize={17}>
+        Información de Publicación
+      </AppText>
+      <View style={styles.inputsContainer}>
+        <Input
+          icon="person"
+          value={formData.title}
+          onChange={handleTitleInputChange}
+          placeHolder="Titulo del Producto"
+          style={styles.formInputs}
+        />
+        <Input
+          icon="person"
+          value={formData.description}
+          onChange={handleDescriptionInputChange}
+          placeHolder="Descripción del Producto"
+          style={styles.formInputs}
+        />
+        <View style={styles.priceContainer}>
+          <AppText font="bold" fontSize={15}>
+            Precio:
+          </AppText>
+          <Input
+            value={formData.price}
+            onChange={handlePriceInputChange}
+            keyboardType="numeric"
+            placeHolder="Precio"
+            style={styles.priceInput}
+          />
+        </View>
+        <View style={{backgroundColor: 'rgba(0,0,0,0.4)', borderRadius: 20, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+          <AppText style={{marginLeft: 10}} font='bold' fontSize={15}>Tienda: </AppText>
+          <Picker
+            selectedValue={selectedShop}
+            onValueChange={itemValue => handleShopChange(itemValue)}
+            placeholder="No hay tiendas..."
+            style={{color: 'white', width: '70%'}}>
+            {userShops.map((shop, index) => (
+              <Picker.Item key={index} label={shop.name} value={shop} />
+            ))}
+          </Picker>
+        </View>
+      </View>
     </View>
   );
 
@@ -187,13 +294,22 @@ const Post = () => {
           <PostImages />
           <PostForm />
           <View style={styles.formActions}>
-            <TouchableOpacity style={[styles.button, {
-              backgroundColor: 'rgba(194, 26, 26, 1)'
-            }]}>
-              <AppText font='bold' fontSize={20}>Cancelar</AppText>
+            <TouchableOpacity
+              onPress={handleCancel}
+              style={[
+                styles.button,
+                {
+                  backgroundColor: 'white',
+                },
+              ]}>
+              <GradientText font="bold" fontSize={20}>
+                Cancelar
+              </GradientText>
             </TouchableOpacity>
             <GradientButton onPress={submitForm} style={styles.button}>
-              <AppText font='bold' fontSize={20}>Publicar</AppText>
+              <AppText font="bold" fontSize={20}>
+                Publicar
+              </AppText>
             </GradientButton>
           </View>
         </>
@@ -264,29 +380,51 @@ const styles = StyleSheet.create({
   formContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.4);',
     width: '80%',
-    height: '70%',
+    height: '60%',
     borderRadius: 20,
-    padding: 20,
     justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 20,
+  },
+  inputsContainer: {
+    width: '100%',
+    height: '80%',
+    justifyContent: 'space-between',
   },
   formActions: {
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
-    paddingHorizontal: '20%'
+    paddingHorizontal: '20%',
   },
   button: {
     padding: 10,
-    borderRadius: 10
+    borderRadius: 10,
   },
   formInputs: {
-    backgroundColor:  'rgba(0, 0, 0, 0.4);',
+    backgroundColor: 'rgba(0, 0, 0, 0.4);',
     borderRadius: 20,
+    padding: 5,
+    width: '100%',
+  },
+  divitionSelect: {
     padding: 10,
-    width: '100%'
-  }
+    backgroundColor: 'black',
+  },
+  priceContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  priceInput: {
+    backgroundColor: 'rgba(0, 0, 0, 0.4);',
+    borderRadius: 20,
+    padding: 5,
+    width: '70%',
+  },
 });
 
 export default Post;

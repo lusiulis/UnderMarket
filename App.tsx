@@ -3,7 +3,7 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import Navigation from './src/Components/Navigation';
-import { AuthContextProvider } from './src/Contexts/app.context.provider';
+import { AuthContextProvider } from './src/Contexts/appContentProvider';
 
 function App() {
   return (

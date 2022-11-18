@@ -46,7 +46,7 @@ const AppCamera = ({handleShow}: IAppCameraProps) => {
     let selectedImagesURIs: ICameraFile[] = [];
     if (result) {
       result.forEach(file => {
-        if (file.uri) selectedImagesURIs.push({uri: file.uri});
+        if (file.uri && file.fileName) selectedImagesURIs.push({uri: file.uri, filename: file.fileName});
       });
       handleShow(selectedImagesURIs);
     }
