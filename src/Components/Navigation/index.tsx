@@ -19,10 +19,8 @@ const Navigation = () => {
       <Stack.Screen name="LogIn" component={LogIn} />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="AppNavigation" component={AppNavigation} />
-      <Stack.Screen name="ProfileShop" component={ProfileShop} />
       <Stack.Screen name="NewShop" component={CreateShop} />
       <Stack.Screen name="ShopsList" component={ShopsList} />
-      <Stack.Screen name="UpdatePassword" component={UpdatePassword} />
 
     </Stack.Navigator>
   );

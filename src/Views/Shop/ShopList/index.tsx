@@ -8,7 +8,7 @@ import AppText from "../../../Components/Common/Text"
 import { IAppScreenProps } from "../../../Components/Navigation/navigation";
 import { AuthContext } from "../../../Contexts/appContentProvider";
 import { IShopLight } from "../../../Models/Shop/shop"
-import { getPostFollowers, getUserShops } from "../../../Models/Shop/shop.model"
+import { getUserShops } from "../../../Models/Shop/shop.model"
 import ProfileShop from "../ProfileShop";
 
 const ShopsList = ({ navigation }: IAppScreenProps) => {
@@ -18,7 +18,6 @@ const ShopsList = ({ navigation }: IAppScreenProps) => {
     const defaultImage = 'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
     const [showModal, setShowModal] = useState(false);
     const [selectedShop, setSelectedShop] = useState<IShopLight>();
-    const [cont, setCont] = useState({ followers: 0, posts: [] });
 
     useEffect(() => {
         if (loading) {
@@ -30,7 +29,6 @@ const ShopsList = ({ navigation }: IAppScreenProps) => {
 
     const getShops = async () => {
         const shopsRes = await getUserShops(String(authState.profile?.id));
-        console.log(shops.length)
         setShops(shopsRes)
         if (shops.length > 0) {
             setLoading(false);
@@ -47,9 +45,6 @@ const ShopsList = ({ navigation }: IAppScreenProps) => {
 
     const viewShop = async (shop: IShopLight) => {
         setSelectedShop(shop)
-        const data = await getPostFollowers(shop.id);
-        setCont({ followers: data.followers.docs.length, posts: [] })
-        console.log(cont)
         setShowModal(!showModal)
     }
 
@@ -91,7 +86,7 @@ const ShopsList = ({ navigation }: IAppScreenProps) => {
                     </ScrollView>
                 </View>
             </LinearGradient>
-            <ProfileShop show={showModal} selectedShop={selectedShop} cont={cont} hide={updateStateModal} />
+            <ProfileShop show={showModal} selectedShop={selectedShop} hide={updateStateModal} />
 
         </>
 

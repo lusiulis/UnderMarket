@@ -18,12 +18,25 @@ type IModal = {
   selectedShop?: IShopLight;
   hide: () => void;
   show: boolean;
-  cont: {followers : number, posts: IContentCard[]}
 };
+//getShopById
 
-const ProfileShop = ({ selectedShop, hide, show, cont }: IModal) => {
+
+const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
   const defaultImage = 'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
-  const [shop, setShop] = useState({ photo: '', name: '', description: '', phonenumber: '', followers: 0, posts: [], networks: Array<ISocialNetwork>() })
+  const [data, setData] = useState({ followers: 0, posts:[], networks: Array<ISocialNetwork>() })
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (loading) {
+        getShop(selectedShop?.id ? selectedShop?.id : '' );
+    }
+  }, [])
+
+  const getShop = async (id: string) =>{
+    const shop = await getShopById(id);
+    setData({followers: shop.followers ? shop.followers: 0 , posts: [] , networks: shop.networks ? shop.networks: []})
+  }
 
   const openNetworks = (data: string) => {
     if (data == 'whatsapp') {
@@ -31,7 +44,12 @@ const ProfileShop = ({ selectedShop, hide, show, cont }: IModal) => {
     }
   }
 
+  const followUnfollowShop= async()=>{
+    
+  }
+
   const getNetworks = () => {
+    console.log(selectedShop)
     return (
       <>
         {selectedShop?.phoneNumber &&
@@ -43,7 +61,7 @@ const ProfileShop = ({ selectedShop, hide, show, cont }: IModal) => {
           </TouchableOpacity>
 
         }
-        {selectedShop?.networks?.map(net => {
+        {data.networks.map(net => {
           if (net.network === 'FACEBOOK') {
             return <TouchableOpacity onPress={() => openNetworks('facebook')}>
               <Image
@@ -86,12 +104,12 @@ const ProfileShop = ({ selectedShop, hide, show, cont }: IModal) => {
               }}
             />
             <View style={CommonStyles.pAll}>
-              <Text style={styles.text}>{cont.followers}</Text>
+              <Text style={styles.text}>{data.followers}</Text>
               <AppText font='bold' fontSize={14}>Seguidores</AppText>
             </View>
 
             <View style={CommonStyles.pAll}>
-              <Text style={styles.text}>{cont.posts.length}</Text>
+              <Text style={styles.text}>{data.posts.length}</Text>
               <AppText font='bold' fontSize={14}>Publicaciones</AppText>
             </View>
 
@@ -104,7 +122,7 @@ const ProfileShop = ({ selectedShop, hide, show, cont }: IModal) => {
             </View>
           </View>
           <View style={styles.form}>
-            <GradientButton onPress={() => null} style={styles.button}>
+            <GradientButton onPress={followUnfollowShop} style={styles.button}>
               <AppText fontSize={16} font="bold" >
                 Seguir
               </AppText>
