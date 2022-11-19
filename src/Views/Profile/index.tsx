@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomSheet } from 'react-native-btr';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { getUserShops } from '../../Models/Shop/shop.model';
+import AuthWidget from '../../Components/Widgets/AuthWIdget';
 
 
 const Profile = () => {
@@ -53,6 +54,8 @@ const Profile = () => {
     }
   }
 
+  const updatePassword = () => navigation.navigate('UpdatePassword')
+
   return (
     <View style={styles.container}>
       {authState.isAunthenticated ? (
@@ -95,7 +98,7 @@ const Profile = () => {
                   {authState.profile?.email ? authState.profile?.email : ''}
                 </AppText>
                 <TouchableOpacity >
-                  <AppText style={styles.link} fontSize={20} font="bolder" onPress={() => { console.log('holaa') }}>
+                  <AppText style={styles.link} fontSize={20} font="bolder" onPress={() => updatePassword()}>
                     Cambiar Contraseña
                   </AppText>
                 </TouchableOpacity>
@@ -133,22 +136,7 @@ const Profile = () => {
           </LinearGradient>
         </>
       ) : (
-        <LinearGradient
-          colors={['#1D5771', '#2A8187', '#46D9B5']}
-          style={styles.container}>
-          <View style={styles.NotLogin}>
-            <AppText fontSize={23} font="bold">
-              No has iniciado Sesión
-            </AppText>
-            <GradientButton onPress={handleRegister} >
-              <AppText style={styles.button} fontSize={20} font="bold">
-                Iniciar Sesión
-              </AppText>
-
-            </GradientButton>
-          </View>
-        </LinearGradient>
-
+        <AuthWidget />
       )}
     </View >
   );

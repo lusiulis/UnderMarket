@@ -37,7 +37,7 @@ const LogIn = () => {
   const handleForgotPassword = () => {};
 
   const handleSignIn = () => {
-    navigation.navigate('SignIn');
+    
   };
 
   return (

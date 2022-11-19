@@ -6,6 +6,7 @@ import AppNavigation from './AppNavigation';
 import ProfileShop from '../../Views/Shop/ProfileShop';
 import CreateShop from '../../Views/Shop/CreateShop';
 import ShopsList from '../../Views/Shop/ShopList';
+import UpdatePassword from '../../Views/Auth/UpdatePassword';
 
 const Navigation = () => {
   const Stack = createStackNavigator();
@@ -21,7 +22,7 @@ const Navigation = () => {
       <Stack.Screen name="ProfileShop" component={ProfileShop} />
       <Stack.Screen name="NewShop" component={CreateShop} />
       <Stack.Screen name="ShopsList" component={ShopsList} />
-
+      <Stack.Screen name="UpdatePassword" component={UpdatePassword} />
 
     </Stack.Navigator>
   );

@@ -99,7 +99,6 @@ const CreateShop = () => {
     }
 
     const handleGoBack = () => {
-        console.log('etaaa')
         navigation.navigate('Profile');
     };
 

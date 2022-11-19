@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native"
 import { useContext, useEffect, useState } from "react"
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native"
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import LinearGradient from "react-native-linear-gradient"
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GradientButton from "../../../Components/Common/Button/GradientButton"
@@ -8,6 +8,7 @@ import AppText from "../../../Components/Common/Text"
 import { AuthContext } from "../../../Contexts/app.context.provider"
 import { IShop, IShopLight } from "../../../Models/Shop/shop"
 import { getUserShops } from "../../../Models/Shop/shop.model"
+import ProfileShop from "../ProfileShop";
 
 const ShopsList = () => {
     const navigation = useNavigation();
@@ -15,7 +16,7 @@ const ShopsList = () => {
     const { authState } = useContext(AuthContext);
     const [shops, setShops] = useState(Array<IShopLight>());
     const defaultImage = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
-
+    const [shopId, setShopId] = useState('');
 
     useEffect(() => {
         if (loading) {
@@ -44,6 +45,10 @@ const ShopsList = () => {
         navigation.navigate('Profile');
     };
 
+    const viewShop = (id: string) => {
+        setShopId(id)
+    }
+
     return (
         <>
 
@@ -67,20 +72,24 @@ const ShopsList = () => {
                             </GradientButton>
 
                             {shops.map(shop => (
-                                <View style={styles.form}>
-                                    <Image
-                                        style={styles.image}
-                                        source={{
-                                            uri: shop.photo ? shop.photo?.toString() : defaultImage,
-                                        }} />
-                                    <AppText style={{ paddingTop: 20, paddingLeft: 13 }} font="bold" fontSize={18}>{shop.name}</AppText>
-                                </View>
+                                <TouchableOpacity onPress={() => viewShop(shop.id)}>
+                                    <View style={styles.form}>
+                                        <Image
+                                            style={styles.image}
+                                            source={{
+                                                uri: shop.photo ? shop.photo?.toString() : defaultImage,
+                                            }} />
+                                        <AppText style={{ paddingTop: 20, paddingLeft: 13 }} font="bold" fontSize={18}>{shop.name}</AppText>
+                                    </View>
+                                </TouchableOpacity>
+
                             ))}
 
                         </>
                     </ScrollView>
                 </View>
             </LinearGradient>
+         
         </>
 
 

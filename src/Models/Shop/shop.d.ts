@@ -1,3 +1,5 @@
+import { IContent } from "../Content/Content";
+
 type ISocialNetwork = {
   network: 'INSTAGRAM' | 'FACEBOOK';
   link: string;
@@ -11,15 +13,17 @@ export type IShop = {
   address?: string;
   phoneNumber?: string;
   networks?: Array<ISocialNetwork>;
-  photo?: String;
 };
 
 export type IShopLight = {
   id: string;
   name: string;
   description: string;
-  photo?: String;
   phoneNumber: string;
+  networks?: Array<ISocialNetwork>;
+  photo?: string;
+  followers?: number;
+  posts?: Array<IContent>;
 }
 
 export type IAddShop = {

@@ -55,5 +55,6 @@ export const AppColors = {
 
 export const AppGradientsColors = {
     active: ['#DE2B6B', '#7D24C2'],
-    base: ['#1D5771', '#2A8187', '#46D9B5']
+    base: ['#1D5771', '#2A8187', '#46D9B5'],
+    cancel : ['#DE2B2B', '#5C0606']
 }
