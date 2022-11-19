@@ -7,53 +7,43 @@ import { useNavigation } from '@react-navigation/native';
 import { CommonStyles } from "../../../Assets/Styles"
 import AppText from "../../../Components/Common/Text"
 import GradientButton from "../../../Components/Common/Button/GradientButton"
-import { AuthContext } from "../../../Contexts/app.context.provider"
-import { getShopByUser } from "../../../Models/Shop/shop.model"
+import { getShopById } from "../../../Models/Shop/shop.model"
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ISocialNetwork } from "../../../Models/Shop/shop"
+import { IShopLight, ISocialNetwork } from "../../../Models/Shop/shop"
+import { AuthContext } from "../../../Contexts/appContentProvider"
+import AppModal from "../../../Components/Common/AppModal"
+import { IContentCard } from "../../../Models/Content/Content"
 
-//const Tab = createMaterialTopTabNavigator();
+type IModal = {
+  selectedShop?: IShopLight;
+  hide: () => void;
+  show: boolean;
+  cont: {followers : number, posts: IContentCard[]}
+};
 
-const ProfileShop = ({ ...props }) => {
-  const { authState } = useContext(AuthContext);
-  const navigation = useNavigation();
+const ProfileShop = ({ selectedShop, hide, show, cont }: IModal) => {
   const defaultImage = 'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
-  const [loading, setLoading] = useState(true);
   const [shop, setShop] = useState({ photo: '', name: '', description: '', phonenumber: '', followers: 0, posts: [], networks: Array<ISocialNetwork>() })
-  const { shopId } = props;
 
-  useEffect(() => {
-    if (loading) {
-      getShop();
-    }
-  })
-
-  const getShop = async () => {
-    const shop = await getShopByUser(shopId)
-    console.log(shop)
-    if (shop) {
-      setShop({ photo: shop.photo ? shop.photo : '', name: shop.name, description: shop.description, phonenumber: shop.phoneNumber, followers: shop.followers ? shop.followers : 0, posts: [], networks: shop.networks ? shop.networks : [] })
-      setLoading(false)
-    }
-  }
   const openNetworks = (data: string) => {
     if (data == 'whatsapp') {
       Linking.openURL(`https://wa.me/{shops[0].phoneNumber.replace('+','')}`);
     }
   }
+
   const getNetworks = () => {
     return (
       <>
-        {shop.phonenumber &&
+        {selectedShop?.phoneNumber &&
           <TouchableOpacity onPress={() => openNetworks('whatsapp')}>
             <Image
               style={[styles.iconsNetworks, CommonStyles.mt_1]}
               source={require('../../../Assets/Icons/whatsapp.png')}
             />
           </TouchableOpacity>
-          
+
         }
-        {shop.networks.map(net => {
+        {selectedShop?.networks?.map(net => {
           if (net.network === 'FACEBOOK') {
             return <TouchableOpacity onPress={() => openNetworks('facebook')}>
               <Image
@@ -76,57 +66,58 @@ const ProfileShop = ({ ...props }) => {
     )
   }
 
-  const handleGoBack = () => {
-    navigation.navigate('ShopsList');
-  };
 
   return (
-    <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']} style={styles.container}>
-      <Icon
-        name="arrow-back-ios"
-        size={25}
-        color="white"
-        style={styles.goBack}
-        onPress={handleGoBack}
-      />
-      <View style={styles.form}>
-        <Image
-          style={styles.image}
-          source={{
-            uri: shop.photo ? shop.photo : defaultImage,
-          }}
-        />
-        <View style={CommonStyles.pAll}>
-          <Text style={styles.text}>{shop.followers.toString()}</Text>
-          <AppText font='bold' fontSize={14}>Seguidores</AppText>
-        </View>
+    <AppModal show={show}>
+      <>
+        <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']} style={styles.container}>
+          <Icon
+            name="arrow-back-ios"
+            size={25}
+            color="white"
+            style={styles.goBack}
+            onPress={hide}
+          />
+          <View style={styles.form}>
+            <Image
+              style={styles.image}
+              source={{
+                uri: selectedShop?.profileImage ? selectedShop.profileImage : defaultImage,
+              }}
+            />
+            <View style={CommonStyles.pAll}>
+              <Text style={styles.text}>{cont.followers}</Text>
+              <AppText font='bold' fontSize={14}>Seguidores</AppText>
+            </View>
 
-        <View style={CommonStyles.pAll}>
-          <Text style={styles.text}>{shop.posts.length}</Text>
-          <AppText font='bold' fontSize={14}>Publicaciones</AppText>
-        </View>
+            <View style={CommonStyles.pAll}>
+              <Text style={styles.text}>{cont.posts.length}</Text>
+              <AppText font='bold' fontSize={14}>Publicaciones</AppText>
+            </View>
 
-      </View>
-      <View style={[CommonStyles.pt_1, CommonStyles.pl_1]}>
-        <AppText font='bolder' fontSize={18}>{shop.name}</AppText>
-        <Text style={styles.description}>{shop.description}</Text>
-        <View style={styles.formNetworks}>
-        {getNetworks()}
-        </View>
-      </View>
-      <View style={styles.form}>
-        <GradientButton onPress={() => null} style={styles.button}>
+          </View>
+          <View style={[CommonStyles.pt_1, CommonStyles.pl_1]}>
+            <AppText font='bolder' fontSize={18}>{selectedShop?.name ? selectedShop.name : ''}</AppText>
+            <Text style={styles.description}>{selectedShop?.description}</Text>
+            <View style={styles.formNetworks}>
+              {getNetworks()}
+            </View>
+          </View>
+          <View style={styles.form}>
+            <GradientButton onPress={() => null} style={styles.button}>
+              <AppText fontSize={16} font="bold" >
+                Seguir
+              </AppText>
+            </GradientButton>
+          </View>
+
           <AppText fontSize={16} font="bold" >
-            Seguir
+            la cartaaaaa de contenidoooooooos faltaaaaaaaa
           </AppText>
-        </GradientButton>
-      </View>
 
-      <AppText fontSize={16} font="bold" >
-        la cartaaaaa de contenidoooooooos faltaaaaaaaa
-      </AppText>
-
-    </LinearGradient>
+        </LinearGradient>
+      </>
+    </AppModal>
   )
 }
 
@@ -176,7 +167,7 @@ const styles = StyleSheet.create({
     width: "100%",
     color: "#D8D8D8"
   },
-  formNetworks:{
+  formNetworks: {
     display: 'flex',
     flexDirection: 'row',
     marginTop: 8

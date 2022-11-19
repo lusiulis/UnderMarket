@@ -8,19 +8,20 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
 import { useContext, useState } from "react";
 import { updatePassword } from "../../../Models/Auth";
-import { AuthContext } from "../../../Contexts/app.context.provider";
+import { AuthContext } from "../../../Contexts/appContentProvider";
+import { IShopLight } from "../../../Models/Shop/shop";
+import AppModal from "../../../Components/Common/AppModal";
 
+type IModal = {
+    shop?: IShopLight;
+    hide: () => void;
+    show: boolean;
+  };
 
-
-const UpdatePassword = () => {
+const UpdatePassword = ({show, hide}: IModal) => {
     const [form, setForm] = useState({ password: '', confirmPassword: '', oldPassword: '' })
     const navigation = useNavigation();
     const { authState, logOut } = useContext(AuthContext);
-
-
-    const handleGoBack = () => {
-        navigation.navigate('Profile');
-    };
 
     const handleInputChange = (value: string, input: string) => {
         if (input === 'oldPassword') setForm({ ...form, oldPassword: value });
@@ -38,13 +39,14 @@ const UpdatePassword = () => {
     };
 
     return (
+        <AppModal show={show}>
         <LinearGradient colors={AppGradientsColors.active} style={styles.container}>
             <Icons
                 name="arrow-back-ios"
                 size={25}
                 color="white"
                 style={styles.goBack}
-                onPress={handleGoBack}
+                onPress={hide}
             />
             <AppText font='bold' style={styles.text} fontSize={24}>
                 Cambiar Contraseña
@@ -79,7 +81,7 @@ const UpdatePassword = () => {
             <View style={styles.row}>
                 <GradientButton
                     colors={AppGradientsColors.cancel}
-                    onPress={handleGoBack}
+                    onPress={hide}
                     style={styles.button}>
                     <AppText font='bold' style={{ textAlign: 'center' }} fontSize={20}>Cancelar</AppText>
                 </GradientButton>
@@ -91,6 +93,7 @@ const UpdatePassword = () => {
                 </GradientButton>
             </View>
         </LinearGradient>
+        </AppModal>
     )
 }
 

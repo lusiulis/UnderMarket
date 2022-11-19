@@ -6,20 +6,20 @@ import { useContext, useEffect, useState } from "react";
 import Input from "../../../Components/Common/Input";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { addShop, createShop, getUserShops } from "../../../Models/Shop/shop.model";
-import { AuthContext } from "../../../Contexts/app.context.provider";
 import { CommonStyles } from "../../../Assets/Styles";
 import GradientButton from "../../../Components/Common/Button/GradientButton";
 import { useNavigation } from "@react-navigation/native";
 import { ISocialNetwork } from "../../../Models/Shop/shop";
+import { AuthContext } from "../../../Contexts/appContentProvider";
+import { IAppScreenProps } from "../../../Components/Navigation/navigation";
 
-const CreateShop = () => {
+const CreateShop = ({navigation}: IAppScreenProps) => {
     const defaultImage = 'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
     const [showCamera, setShowCamera] = useState(true);
-    const [formData, setFormData] = useState({ name: '', description: '', photo: '', phoneNumber: '', address: '', networks: [] as Array<ISocialNetwork> })
+    const [formData, setFormData] = useState({ name: '', description: '', profileImage: '', phoneNumber: '', address: '', networks: [] as Array<ISocialNetwork> })
     const [loading, setLoading] = useState(true);
     const { authState } = useContext(AuthContext);
     const [shopId, setShopId] = useState('');
-    const navigation = useNavigation();
     const [accordionState, SetAccordionState] = useState(false)
     const [updatedHeight, setUpdatedHeight] = useState(0)
     const [facebook, setFacebook] = useState('')
@@ -48,8 +48,8 @@ const CreateShop = () => {
             setFormData({ ...formData, name: value })
         } else if (input === 'description') {
             setFormData({ ...formData, description: value })
-        } else if (input === 'photo') {
-            setFormData({ ...formData, photo: value })
+        } else if (input === 'profileImage') {
+            setFormData({ ...formData, profileImage: value })
         } else if (input === 'phoneNumber') {
             setFormData({ ...formData, phoneNumber: value })
         }
@@ -121,9 +121,11 @@ const CreateShop = () => {
                             style={styles.image}
                         />
                         <Icons name='camera-enhance' size={35} style={styles.camera} color='black' onPress={handleShowCameraModal} />
+                        <View style={{width:'80%'}}>
                         <View>
                             <AppText style={CommonStyles.mb_1} fontSize={15} font="bolder">Nombre</AppText>
                             <Input
+                            
                                 backgroundColor={'#FFFFFF4F'}
                                 value={formData.name}
                                 placeHolder="Nombre de la tienda"
@@ -162,6 +164,7 @@ const CreateShop = () => {
                                 icon="place"
                                 onChange={value => handleInputChange(value, 'address')}
                             />
+                        </View>
                         </View>
                         <View style={[styles.accordionHolder, { marginTop: 30 }]}>
 
@@ -208,7 +211,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#FFFFFF4F',
         borderRadius: 10,
-        width: '78%',
+        width: '80%',
     },
     goBack: {
         position: 'absolute',

@@ -5,18 +5,20 @@ import LinearGradient from "react-native-linear-gradient"
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GradientButton from "../../../Components/Common/Button/GradientButton"
 import AppText from "../../../Components/Common/Text"
-import { AuthContext } from "../../../Contexts/app.context.provider"
-import { IShop, IShopLight } from "../../../Models/Shop/shop"
-import { getUserShops } from "../../../Models/Shop/shop.model"
+import { IAppScreenProps } from "../../../Components/Navigation/navigation";
+import { AuthContext } from "../../../Contexts/appContentProvider";
+import { IShopLight } from "../../../Models/Shop/shop"
+import { getPostFollowers, getUserShops } from "../../../Models/Shop/shop.model"
 import ProfileShop from "../ProfileShop";
 
-const ShopsList = () => {
-    const navigation = useNavigation();
+const ShopsList = ({ navigation }: IAppScreenProps) => {
     const [loading, setLoading] = useState(true);
     const { authState } = useContext(AuthContext);
     const [shops, setShops] = useState(Array<IShopLight>());
-    const defaultImage = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
-    const [shopId, setShopId] = useState('');
+    const defaultImage = 'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
+    const [showModal, setShowModal] = useState(false);
+    const [selectedShop, setSelectedShop] = useState<IShopLight>();
+    const [cont, setCont] = useState({ followers: 0, posts: [] });
 
     useEffect(() => {
         if (loading) {
@@ -24,14 +26,12 @@ const ShopsList = () => {
         }
     }, [])
 
+    const updateStateModal = () => setShowModal(!showModal)
 
     const getShops = async () => {
         const shopsRes = await getUserShops(String(authState.profile?.id));
         console.log(shops.length)
         setShops(shopsRes)
-
-        /* shops.forEach(x => {
-         })*/
         if (shops.length > 0) {
             setLoading(false);
         }
@@ -45,16 +45,18 @@ const ShopsList = () => {
         navigation.navigate('Profile');
     };
 
-    const viewShop = (id: string) => {
-        setShopId(id)
+    const viewShop = async (shop: IShopLight) => {
+        setSelectedShop(shop)
+        const data = await getPostFollowers(shop.id);
+        setCont({ followers: data.followers.docs.length, posts: [] })
+        console.log(cont)
+        setShowModal(!showModal)
     }
 
     return (
         <>
-
             <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']}
                 style={styles.container}>
-
                 <View style={styles.content}>
                     <Icon
                         name="arrow-back-ios"
@@ -72,12 +74,12 @@ const ShopsList = () => {
                             </GradientButton>
 
                             {shops.map(shop => (
-                                <TouchableOpacity onPress={() => viewShop(shop.id)}>
+                                <TouchableOpacity onPress={() => viewShop(shop)}>
                                     <View style={styles.form}>
                                         <Image
                                             style={styles.image}
                                             source={{
-                                                uri: shop.photo ? shop.photo?.toString() : defaultImage,
+                                                uri: shop.profileImage ? shop.profileImage?.toString() : defaultImage,
                                             }} />
                                         <AppText style={{ paddingTop: 20, paddingLeft: 13 }} font="bold" fontSize={18}>{shop.name}</AppText>
                                     </View>
@@ -89,7 +91,8 @@ const ShopsList = () => {
                     </ScrollView>
                 </View>
             </LinearGradient>
-         
+            <ProfileShop show={showModal} selectedShop={selectedShop} cont={cont} hide={updateStateModal} />
+
         </>
 
 

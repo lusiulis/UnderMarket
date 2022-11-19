@@ -11,14 +11,17 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import { getUserShops } from '../../Models/Shop/shop.model';
 import AuthWidget from '../../Components/Widgets/AuthWIdget';
 import { AuthContext } from '../../Contexts/appContentProvider';
+import UpdatePassword from '../Auth/UpdatePassword';
+import { IAppScreenProps } from '../../Components/Navigation/navigation';
 
 
-const Profile = () => {
+const Profile = ({navigation}: IAppScreenProps) => {
   const { authState, logOut } = useContext(AuthContext);
-  const navigation = useNavigation();
   const defaultImage = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
   const [showCamera, setShowCamera] = useState(true);
   const [shopId, setShopId] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
 
   useEffect(() => {
     getShop();
@@ -54,7 +57,7 @@ const Profile = () => {
     }
   }
 
-  const updatePassword = () => navigation.navigate('UpdatePassword')
+  const updateStateModal = () => setShowModal(!showModal)
 
   return (
     <View style={styles.container}>
@@ -98,7 +101,7 @@ const Profile = () => {
                   {authState.profile?.email ? authState.profile?.email : ''}
                 </AppText>
                 <TouchableOpacity >
-                  <AppText style={styles.link} fontSize={20} font="bolder" onPress={() => updatePassword()}>
+                  <AppText style={styles.link} fontSize={20} font="bolder" onPress={updateStateModal}>
                     Cambiar Contraseña
                   </AppText>
                 </TouchableOpacity>
@@ -133,6 +136,7 @@ const Profile = () => {
 
               </BottomSheet>
             </View>
+            <UpdatePassword show={showModal} hide={updateStateModal}/>
           </LinearGradient>
         </>
       ) : (

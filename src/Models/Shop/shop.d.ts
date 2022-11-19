@@ -21,13 +21,13 @@ export type IShopLight = {
   description: string;
   phoneNumber: string;
   networks?: Array<ISocialNetwork>;
-  photo?: string;
+  profileImage?: string;
   followers?: number;
   posts?: Array<IContent>;
 }
 
 export type IAddShop = {
-  photo?: String;
+  profileImage?: String;
   name: string;
   description: string;
   userId: string;
