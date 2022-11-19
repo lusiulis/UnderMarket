@@ -35,3 +35,9 @@ export type IAddShop = {
   phoneNumber: string;
   networks?: Array<ISocialNetwork>;
 };
+
+export type IShopPreview = {
+  id: string;
+  name: string;
+  profileImage: string;
+}

@@ -3,7 +3,6 @@ import { View, StyleSheet, Image, Button, TouchableOpacity } from 'react-native'
 import { AppColors, CommonStyles } from '../../Assets/Styles';
 import GradientButton from '../../Components/Common/Button/GradientButton';
 import AppText from '../../Components/Common/Text';
-import { AuthContext } from '../../Contexts/app.context.provider';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +10,7 @@ import { BottomSheet } from 'react-native-btr';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import { getUserShops } from '../../Models/Shop/shop.model';
 import AuthWidget from '../../Components/Widgets/AuthWIdget';
+import { AuthContext } from '../../Contexts/appContentProvider';
 
 
 const Profile = () => {

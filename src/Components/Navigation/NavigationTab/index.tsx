@@ -1,8 +1,9 @@
 import {View, StyleSheet, Text} from 'react-native';
-import {AppColors, AppGradientsColors} from '../../../Assets/Styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProfileIcon from '../../Snippets/ProfileIcon';
 import GradientWrapper from '../../Common/GradientWrapper';
+import { useContext } from 'react';
+import { AuthContext } from '../../../Contexts/appContentProvider';
 
 type IIcon = 'home' | 'search' | 'notifications' | 'add-circle' | 'profile';
 
@@ -13,6 +14,8 @@ type INavigationTabProps = {
 };
 
 const NavigationTab = ({focused, value, icon}: INavigationTabProps) => {
+  const {authState} = useContext(AuthContext);
+
   const styles = StyleSheet.create({
     container: {
       alignItems: 'center',
@@ -44,7 +47,7 @@ const NavigationTab = ({focused, value, icon}: INavigationTabProps) => {
           />
         )
       ) : (
-        <ProfileIcon focused={focused} />
+        <ProfileIcon focused={focused} source={authState.profile?.profileImage} />
       )}
     </View>
   );

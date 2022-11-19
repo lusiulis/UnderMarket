@@ -1,6 +1,6 @@
 import { createContext, ReactElement } from 'react';
-import { IAuthContext, IAuthProfile } from '../Hooks/auth';
-import { useAuthContext } from '../Hooks/auth/useAuthContext';
+import { IAuthContext } from '../Hooks/Auth';
+import { useAuthContext } from '../Hooks/Auth/useAuthContext';
 
 type IAuthContextProps = {
   children: ReactElement

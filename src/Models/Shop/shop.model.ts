@@ -1,4 +1,4 @@
-import { IAddShop, IShop, IShopLight, ISocialNetwork } from './shop';
+import {IAddShop, IShop, IShopLight, IShopPreview, ISocialNetwork} from './shop';
 import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
 import { IContent } from '../Content/Content';
@@ -6,6 +6,12 @@ import { IContent } from '../Content/Content';
 const shopColletion = firestore().collection('shop');
 const followerCollection = firestore().collection('follower');
 const postCollection = firestore().collection('content');
+
+const formatShopPreview = (doc: any): IShopPreview => ({
+  id: doc.id,
+  name: doc.get('name'),
+  profileImage: doc.get('profileImage'),
+});
 
 export const addShop = async (payload: IAddShop) =>
   await shopColletion.add({
@@ -40,3 +46,8 @@ export const createShop = async (payload: IAddShop, networks?: Array<ISocialNetw
   }
   return await shopColletion.add({ ...payload, networks });
 }
+
+export const getShopPreview = async (id: string): Promise<IShopPreview> => {
+  const dbResponse = await shopColletion.doc(id).get();
+  return formatShopPreview(dbResponse);
+};
