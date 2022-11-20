@@ -19,23 +19,21 @@ type IModal = {
   hide: () => void;
   show: boolean;
 };
-//getShopById
-
 
 const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
   const defaultImage = 'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
-  const [data, setData] = useState({ followers: 0, posts:[], networks: Array<ISocialNetwork>() })
+  const [data, setData] = useState({ followers: 0, posts: [], networks: Array<ISocialNetwork>() })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (loading) {
-        getShop(selectedShop?.id ? selectedShop?.id : '' );
+      getShop(selectedShop?.id ? selectedShop?.id : '');
     }
   }, [])
 
-  const getShop = async (id: string) =>{
+  const getShop = async (id: string) => {
     const shop = await getShopById(id);
-    setData({followers: shop.followers ? shop.followers: 0 , posts: [] , networks: shop.networks ? shop.networks: []})
+    setData({ followers: shop.followers ? shop.followers : 0, posts: [], networks: shop.networks ? shop.networks : [] })
   }
 
   const openNetworks = (data: string) => {
@@ -44,12 +42,11 @@ const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
     }
   }
 
-  const followUnfollowShop= async()=>{
-    
+  const followUnfollowShop = async () => {
+
   }
 
   const getNetworks = () => {
-    console.log(selectedShop)
     return (
       <>
         {selectedShop?.phoneNumber &&
