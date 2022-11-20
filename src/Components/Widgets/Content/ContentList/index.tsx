@@ -51,7 +51,7 @@ const ContentList = ({contents, style, onPagination, refresh}: IContentListProps
       >
         <View style={styles.container}>
           {contents.map((content, index) => (
-            <View style={{width: '70%'}} key={index}>
+            <View style={{width: '80%'}} key={index}>
               <TouchableOpacity onPress={() => handlePressCard(content)} activeOpacity={1}>
                 <View style={styles.item}>
                   <View
@@ -59,16 +59,19 @@ const ContentList = ({contents, style, onPagination, refresh}: IContentListProps
                       alignItems: 'center',
                       justifyContent: 'center',
                       width: '100%',
-                      flex: 1
+                      flex: 1,
+                      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                      borderRadius: 10,
+                      padding: 5
                     }}>
                     <ImageSlider
                       data={getFormatedImages(content.files)}
-                      caroselImageStyle={{resizeMode: 'cover', flex: 1,
-                      borderRadius: 10}}
+                      caroselImageStyle={{resizeMode: 'cover', flex: 1, width: 200, borderRadius: 10}}
                       caroselImageContainerStyle={{
-                        width: '100%',
                         alignItems: 'center',
                         flex: 1,
+                        padding: 5,
+                        width: '100%'
                       }}
                       preview={false}
                       showIndicator={false}
@@ -116,7 +119,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   item: {
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     borderRadius: 20,
     marginTop: 5,
     alignItems: 'center',
