@@ -1,17 +1,15 @@
-import {useContext} from 'react';
 import {View, StyleSheet, ViewStyle, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {AppGradientsColors} from '../../../Assets/Styles';
-import {AuthContext} from '../../../Contexts/app.context.provider';
 
 type IProfileIconProps = {
   style?: ViewStyle;
   size?: number;
   focused?: boolean;
+  source?: string
 };
 
-const ProfileIcon = ({style, size, focused}: IProfileIconProps) => {
-  const {authState} = useContext(AuthContext);
+const ProfileIcon = ({style, size, focused, source}: IProfileIconProps) => {
 
   const styles = StyleSheet.create({
     profileContainer: {
@@ -38,7 +36,7 @@ const ProfileIcon = ({style, size, focused}: IProfileIconProps) => {
         source={{
           width: size ? size : 35,
           height: size ? size : 35,
-          uri: authState.profile?.profileImage ? authState.profile.profileImage : defaultImage,
+          uri: source ? source: defaultImage,
         }}
         style={styles.imageStyle}
       />
@@ -49,7 +47,7 @@ const ProfileIcon = ({style, size, focused}: IProfileIconProps) => {
         source={{
           width: size ? size : 35,
           height: size ? size : 35,
-          uri: authState.profile?.profileImage ? authState.profile.profileImage : defaultImage,
+          uri: source ? source: defaultImage,
         }}
         style={styles.imageStyle}
       />

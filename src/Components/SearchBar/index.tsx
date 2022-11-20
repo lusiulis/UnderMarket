@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     width: '100%',
     padding: '4%',
     borderBottomLeftRadius: 25,

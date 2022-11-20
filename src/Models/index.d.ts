@@ -1,4 +1,4 @@
 export type IPaginationPayload = {
-    page: number;
+    offset?: any;
     limit: number; 
 }

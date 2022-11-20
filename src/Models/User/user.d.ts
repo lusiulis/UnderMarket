@@ -21,3 +21,8 @@ export type IValidate = {
   username: string;
   phoneNumber: string;
 };
+
+export type IUpdateUser = {
+  username: string;
+  email: string;
+}

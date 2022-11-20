@@ -1,16 +1,64 @@
-import firestore from '@react-native-firebase/firestore'
-import { addFile } from '../File';
-import { IAddContentPayload, IContent, IGetContentsPayload } from './Content'
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import {IPaginationPayload} from '..';
+import {getShopPreview} from '../Shop/shop.model';
+import {
+  IAddContentPayload,
+  IContent,
+  IContentCard,
+  IGetContentsByShopPayload,
+  IPaginatedContentCards,
+} from './Content';
+import {formatContentCardDocs, formatContentDocs} from './utils';
 
-const ContentCollection = firestore().collection('content')
+const ContentCollection = firestore().collection('content');
 
-export const addContent = async ({filesUrl, ...content}: IAddContentPayload): Promise<string> => {
-    const dbResponse = await ContentCollection.add(content);
-    filesUrl.forEach(async url => await addFile({contentId: dbResponse.id, imageUrl: url}))
-    return dbResponse.id
+export const addContent = async (
+  payload: IAddContentPayload,
+): Promise<string> => {
+  const dbResponse = await ContentCollection.add(payload);
+  return dbResponse.id;
+};
+
+export const getContents = async ({
+  limit,
+  offset,
+}: IPaginationPayload): Promise<IPaginatedContentCards> => {
+  const dbResponse = offset
+    ? await ContentCollection.startAt(offset).limit(limit).get()
+    : await ContentCollection.limit(limit).get();
+  const formatedContents = await Promise.all(
+    formatContentCardDocs(dbResponse.docs).map(async content => {
+      content.shop = await getShopPreview(content.shop.id);
+      return content;
+    }),
+  );
+  return {
+    contents: formatedContents,
+    lastElement: dbResponse.docs[dbResponse.docs.length - 1]
+  };
+};
+
+export const getContentsByShopId = async ({
+  shopId,
+  pagination,
+}: IGetContentsByShopPayload): Promise<IContent[]> => {
+  const dbResponse = await ContentCollection.startAfter(pagination.offset)
+  .limit(pagination.limit)
+    .where('shopId', '==', shopId)
+    .get();
+  return formatContentDocs(dbResponse.docs);
+};
+
+export const getContentSuscription = (onComplete: (result: IContentCard[]) => void) => {
+  ContentCollection.onSnapshot(async (data) => onComplete(await handleSuscriptionResponse(data)))
 }
 
-export const getContents = async({}: IGetContentsPayload): Promise<IContent[]> => {
-    
-    return []
+const handleSuscriptionResponse = async (data: FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>): Promise<IContentCard[]> => {
+  const formatedContents = await Promise.all(
+    formatContentCardDocs(data.docs).map(async content => {
+      content.shop = await getShopPreview(content.shop.id);
+      return content;
+    }),
+  );
+  return formatedContents
 }

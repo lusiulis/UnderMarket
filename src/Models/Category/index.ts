@@ -13,3 +13,12 @@ export const getCategoryByDivitionId = async (divtion: string): Promise<ICategor
     const response = await CategoryCollection.where('divitionId', '==', divtion).get();
     return response.docs.map((item) => ({id: item.id, name: item.get('name'), divitionId: item.get('divitionId')}))
 }
+
+export const getCategoryById = async (id: string): Promise<ICategory> => {
+    const response = await CategoryCollection.doc(id).get();
+    return {
+        id: response.id,
+        name: response.get('name'),
+        divitionId: response.get('divitionId')
+    }
+}
