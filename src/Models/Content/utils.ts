@@ -15,7 +15,7 @@ export const formatContentDocs = (
 
 export const formatContentCardDocs = (contentDocs: any[]): IContentCard[] => contentDocs.map((doc) => ({
     id: doc.id,
-    categoryId: doc.get('categoryId'),
+    categorys: doc.get('categorys'),
     contentType: doc.get('contentType'),
     description: doc.get('description'),
     title: doc.get('title'),

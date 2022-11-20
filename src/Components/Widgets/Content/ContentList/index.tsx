@@ -1,5 +1,5 @@
 import {useContext, useRef, useState} from 'react';
-import {StyleSheet, View, ViewStyle, Image} from 'react-native';
+import {StyleSheet, View, ViewStyle, Image, NativeSyntheticEvent, NativeScrollEvent} from 'react-native';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import LinearGradient from 'react-native-linear-gradient';
@@ -15,9 +15,18 @@ type IContentListProps = {
   contents: IContentCard[];
   style?: ViewStyle;
   onPagination?: () => void;
+  refresh?: () => void;
 };
 
-const ContentList = ({contents, style}: IContentListProps) => {
+const isCloseToBottom = ({nativeEvent}: NativeSyntheticEvent<NativeScrollEvent>) => {
+  const { layoutMeasurement, contentOffset, contentSize } = nativeEvent
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom;
+};
+
+
+const ContentList = ({contents, style, onPagination, refresh}: IContentListProps) => {
   const [selectedContent, setSelectedContent] = useState<IContentCard>();
   const [showCardModal, setShowCardModal] = useState(false);
 
@@ -35,26 +44,34 @@ const ContentList = ({contents, style}: IContentListProps) => {
 
   return (
     <View style={styles.main}>
-      <ScrollView>
+      <ScrollView onScroll={(event) => {
+        if(isCloseToBottom(event) && onPagination) onPagination();
+      }}
+      onScrollToTop={refresh}
+      >
         <View style={styles.container}>
           {contents.map((content, index) => (
-            <View style={{width: '45%'}} key={index}>
-              <TouchableOpacity onPress={() => handlePressCard(content)}>
+            <View style={{width: '70%'}} key={index}>
+              <TouchableOpacity onPress={() => handlePressCard(content)} activeOpacity={1}>
                 <View style={styles.item}>
                   <View
                     style={{
                       alignItems: 'center',
                       justifyContent: 'center',
-                      height: 200,
+                      width: '100%',
+                      flex: 1
                     }}>
                     <ImageSlider
                       data={getFormatedImages(content.files)}
-                      previewImageStyle={{width: 200, height: 200}}
+                      caroselImageStyle={{resizeMode: 'cover', flex: 1,
+                      borderRadius: 10}}
                       caroselImageContainerStyle={{
-                        width: String(100 / content.files.length).concat('%'),
+                        width: '100%',
                         alignItems: 'center',
+                        flex: 1,
                       }}
                       preview={false}
+                      showIndicator={false}
                     />
                   </View>
                   <View style={styles.profileContainer}>
@@ -80,8 +97,8 @@ const ContentList = ({contents, style}: IContentListProps) => {
             </View>
           ))}
         </View>
+        {selectedContent && <ContentDetail show={showCardModal} content={selectedContent} hide={handleCardCancel} />}
       </ScrollView>
-      <ContentDetail show={showCardModal} content={selectedContent} hide={handleCardCancel} />
     </View>
   );
 };
@@ -89,7 +106,7 @@ const ContentList = ({contents, style}: IContentListProps) => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    marginBottom: 30,
+    marginBottom:55,
   },
   container: {
     flexDirection: 'row',
@@ -105,6 +122,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     display: 'flex',
     padding: 10,
+    width: '100%'
   },
   profileContainer: {
     display: 'flex',

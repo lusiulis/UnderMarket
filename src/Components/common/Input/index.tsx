@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {View, StyleSheet, Text, TextInput} from 'react-native';
+import {View, StyleSheet, Text, TextInput, StyleProp, TextStyle} from 'react-native';
 import {AppColors} from '../../../Assets/Styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {IconName} from '../../../Utils/common';
@@ -8,14 +8,15 @@ import { KeyboardType } from 'react-native';
 type IInputProps = {
   icon?: IconName;
   onChange: (v: string) => void;
-  style?: Object;
+  style?: StyleProp<TextStyle>;
   value?: any;
   error?: boolean;
   placeHolder: string;
   secure?: boolean;
   color?: string;
   backgroundColor?: string;
-  keyboardType?: KeyboardType
+  keyboardType?: KeyboardType;
+  stateManagment?: boolean;
 };
 
 const Input = ({
@@ -28,6 +29,7 @@ const Input = ({
   secure,
   color,
   backgroundColor,
+  stateManagment,
   keyboardType
 }: IInputProps) => {
   const [focused, setFocused] = useState(false);
@@ -69,6 +71,7 @@ const Input = ({
     <View style={style}>
       <View
         style={[
+          {backgroundColor: backgroundColor? backgroundColor : ''},
           styles.wrapper,
           {alignItems: icon ? 'center' : 'baseline'},
           {borderColor: getBorderColor(), flexDirection: 'row'},
@@ -79,16 +82,16 @@ const Input = ({
         <TextInput
           placeholderTextColor={color ? color : 'white'}
           style={[styles.textInput]}
-          onChangeText={handleInputChange}
+          onChangeText={stateManagment ? handleInputChange : onChange}
           placeholder={placeHolder}
-          value={inputValue}
+          value={stateManagment ? inputValue : value}
           keyboardType={keyboardType}
           onFocus={() => {
             setFocused(true);
           }}
           onBlur={() => {
             setFocused(false);
-            onChange(inputValue);
+            if(stateManagment) onChange(inputValue);
           }}
           secureTextEntry={secure}
         />

@@ -1,12 +1,12 @@
 import MaskedView from '@react-native-masked-view/masked-view';
 import {ReactElement} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import {View} from 'react-native';
+import {StyleProp, View, ViewStyle} from 'react-native';
 import {AppGradientsColors} from '../../../Assets/Styles';
 
 type IGradientWrapperProps = {
   children: ReactElement;
-  style?: Object;
+  style?: StyleProp<ViewStyle>;
   colors?: Array<string>;
 };
 

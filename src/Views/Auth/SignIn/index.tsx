@@ -3,14 +3,14 @@ import {CommonStyles} from '../../../Assets/Styles';
 import AppText from '../../../Components/Common/Text';
 import GradientText from '../../../Components/Common/Text/GradientText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {IAuthScreenProps} from '../../../Components/Navigation/navigation';
+import {IAppScreenProps, IScreenProps} from '../../../Components/Navigation/navigation';
 import Input from '../../../Components/Common/Input';
 import {useState} from 'react';
 import GradientButton from '../../../Components/Common/Button/GradientButton';
-import AppSwitch from '../../../Components/Common/Input/Switch';
 import {signIn} from '../../../Models/Auth';
+import {ScrollView} from 'react-native-gesture-handler';
 
-const SignIn = ({navigation}: IAuthScreenProps) => {
+const SignIn = ({navigation}: IAppScreenProps) => {
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -44,64 +44,70 @@ const SignIn = ({navigation}: IAuthScreenProps) => {
   };
 
   return (
-    <View style={CommonStyles.mainContainer}>
-      <Image
-        style={styles.backgroud}
-        source={require('../../../Assets/Images/login-back.png')}
-      />
-      <View style={styles.form}>
-        <Icon
-          name="arrow-back-ios"
-          size={25}
-          color="white"
-          style={styles.goBack}
-          onPress={handleGoBack}
+    <ScrollView>
+      <View style={CommonStyles.mainContainer}>
+        <Image
+          style={styles.backgroud}
+          source={require('../../../Assets/Images/login-back.png')}
         />
-        <AppText font="bold" fontSize={25}>
-          Registro
-        </AppText>
-        <View style={styles.inputsContainer}>
-          <GradientText font='bold' fontSize={20} style={{marginBottom: 20}}>Información de la Cuenta</GradientText>
-          <Input
-            value={formData.email}
-            placeHolder="Correo"
-            icon="alternate-email"
-            onChange={value => handleInputChange(value, 'email')}
+        <View style={styles.form}>
+          <Icon
+            name="arrow-back-ios"
+            size={25}
+            color="white"
+            style={styles.goBack}
+            onPress={handleGoBack}
           />
-          <Input
-            value={formData.username}
-            placeHolder="Nombre de Usuario"
-            icon="person"
-            onChange={value => handleInputChange(value, 'username')}
-          />
-          <Input
-            value={formData.password}
-            placeHolder="Contraseña"
-            secure
-            icon="lock"
-            onChange={value => handleInputChange(value, 'password')}
-          />
-          <Input
-            value={formData.confirmPassword}
-            placeHolder="Confirmar Contraseña"
-            secure
-            icon="lock"
-            onChange={value => handleInputChange(value, 'confirmPassword')}
-          />
-          {isStore && (
+          <AppText font="bold" fontSize={25}>
+            Registro
+          </AppText>
+          <View style={styles.inputsContainer}>
+            <GradientText font="bold" fontSize={20} style={{marginBottom: 20}}>
+              Información de la Cuenta
+            </GradientText>
             <Input
-              value={formData.phoneNumber}
-              placeHolder="Número de Telefono"
-              icon="phone"
-              onChange={value => handleInputChange(value, 'phoneNumber')}
+              value={formData.email}
+              placeHolder="Correo"
+              icon="alternate-email"
+              onChange={value => handleInputChange(value, 'email')}
             />
-          )}
+            <Input
+              value={formData.username}
+              placeHolder="Nombre de Usuario"
+              icon="person"
+              onChange={value => handleInputChange(value, 'username')}
+            />
+            <Input
+              value={formData.password}
+              placeHolder="Contraseña"
+              secure
+              icon="lock"
+              onChange={value => handleInputChange(value, 'password')}
+            />
+            <Input
+              value={formData.confirmPassword}
+              placeHolder="Confirmar Contraseña"
+              secure
+              icon="lock"
+              onChange={value => handleInputChange(value, 'confirmPassword')}
+            />
+            {isStore && (
+              <Input
+                value={formData.phoneNumber}
+                placeHolder="Número de Telefono"
+                icon="phone"
+                onChange={value => handleInputChange(value, 'phoneNumber')}
+              />
+            )}
+          </View>
+          <GradientButton onPress={handleSubmit} style={styles.button}>
+            <AppText font="bold" fontSize={20}>
+              Registrarme
+            </AppText>
+          </GradientButton>
         </View>
-        <GradientButton onPress={handleSubmit} style={styles.button}>
-          <AppText font='bold' fontSize={20}>Registrarme</AppText>
-        </GradientButton>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -130,8 +136,8 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 10,
-    borderRadius: 10
-  }
+    borderRadius: 10,
+  },
 });
 
 export default SignIn;

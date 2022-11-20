@@ -1,5 +1,5 @@
 import {ReactElement} from 'react';
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {AppGradientsColors} from '../../../../Assets/Styles';
 
@@ -7,9 +7,17 @@ type IGradientButtonProps = {
   loading?: boolean;
   disabled?: boolean;
   colors?: Array<string>;
-  style?: Object;
+  style?: StyleProp<ViewStyle>;
   children: ReactElement;
   onPress: () => void;
+  start?: {
+    x: number;
+    y: number;
+  };
+  end?: {
+    x: number;
+    y: number;
+  };
 };
 
 const GradientButton = ({
@@ -17,13 +25,19 @@ const GradientButton = ({
   children,
   style,
   onPress,
-  disabled
+  disabled,
+  start,
+  end,
 }: IGradientButtonProps) => {
   return (
     <LinearGradient
       style={style}
-      colors={colors ? colors : AppGradientsColors.active}>
-      <TouchableOpacity disabled={disabled} onPress={onPress}>{children}</TouchableOpacity>
+      colors={colors ? colors : AppGradientsColors.active}
+      start={start}
+      end={end}>
+      <TouchableOpacity disabled={disabled} onPress={onPress}>
+        {children}
+      </TouchableOpacity>
     </LinearGradient>
   );
 };

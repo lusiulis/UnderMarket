@@ -1,4 +1,5 @@
 import type { IPaginationPayload } from "..";
+import { ICategory } from "../Category/Category";
 import type { IAddFile } from "../File/File";
 import type { IShopPreview } from "../Shop/shop";
 
@@ -18,7 +19,7 @@ export type IContentCard = {
         price: number,
         percentage: number
     }
-    categoryId: string;
+    categorys: string[];
     contentType: IContentType;
     description: string;
     title: string;
@@ -32,10 +33,15 @@ export type IAddContentPayload = {
     shopId: string;
     title: string;
     description: string;
-    categoryId: string;
+    categorys: string[];
     price: number;
     contentType: 'image' | 'video'
     files: string[]
+}
+
+export type IPaginatedContentCards = {
+    contents: IContentCard[];
+    lastElement: any;
 }
 
 export type IGetContentsByShopPayload = {
