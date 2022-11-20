@@ -22,15 +22,30 @@ export const CommonStyles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.4);',
     borderRadius: 20,
   },
-  mt_1: {
-    marginTop: 10,
-  },
-  mt_2: {
-    marginTop: 20,
-  },
-  baseText: {
-    fontFamily: 'Montserrat',
-  },
+  mt_1 : {
+    marginTop: 10
+},
+mb_1 : {
+    marginBottom: 10
+},
+mt_2 : {
+    marginTop: 20
+},
+pt_1 : {
+    paddingTop: 10
+},
+pt_2 : {
+    paddingTop: 20
+},
+pl_1 : {
+    paddingLeft: 10
+},
+pAll: {
+    padding: 10
+},
+baseText: {
+    fontFamily: 'Montserrat'
+}
 });
 
 export const AppColors = {
@@ -43,6 +58,7 @@ export const AppColors = {
 };
 
 export const AppGradientsColors = {
-  active: ['#DE2B6B', '#7D24C2'],
-  base: ['#1D5771', '#2A8187', '#46D9B5'],
-};
+    active: ['#DE2B6B', '#7D24C2'],
+    base: ['#1D5771', '#2A8187', '#46D9B5'],
+    cancel : ['#DE2B2B', '#5C0606']
+}

@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import {StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {AppGradientsColors} from '../../../Assets/Styles';
@@ -6,12 +7,8 @@ import GradientButton from '../../Common/Button/GradientButton';
 import AppText from '../../Common/Text';
 import {IScreenProps} from '../../Navigation/navigation';
 
-type IAuthWidget = {
-  navigation: IScreenProps;
-};
-
-const AuthWidget = ({navigation}: IAuthWidget) => {
-
+const AuthWidget = () => {
+  const navigation = useNavigation();
   const handleLoginPress = () => {
     navigation.navigate('LogIn');
   };

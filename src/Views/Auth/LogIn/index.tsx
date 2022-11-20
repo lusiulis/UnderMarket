@@ -40,7 +40,7 @@ const LogIn = ({navigation}: IAppScreenProps) => {
   const handleForgotPassword = () => {};
 
   const handleSignIn = () => {
-    navigation.navigate('SignIn');
+    
   };
 
   return (

@@ -58,6 +58,8 @@ const Post = ({navigation}: IScreenProps) => {
   const [selectedShop, setSelectedShop] = useState<IShopLight>({
     id: '',
     name: '',
+    description: '',
+    phoneNumber: ''
   });
 
   const fetchData = useCallback(async () => {
@@ -333,7 +335,7 @@ const Post = ({navigation}: IScreenProps) => {
       </LinearGradient>
     )
   ) : (
-    <AuthWidget navigation={navigation} />
+    <AuthWidget />
   );
 };
 

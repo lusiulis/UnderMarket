@@ -1,6 +1,8 @@
 export type IAuthProfile = {
   id: string;
   profileImage?: string;
+  username: string;
+  email: string;
 };
 
 export type IAuthState = {

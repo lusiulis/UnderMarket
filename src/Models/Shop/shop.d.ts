@@ -1,24 +1,39 @@
+import { IContent } from "../Content/Content";
+
 type ISocialNetwork = {
-  network: 'INSTAGRAM' | 'FACEBOOK' | 'PERSONAL';
-  link: URL;
+  network: 'INSTAGRAM' | 'FACEBOOK';
+  link: string;
 };
 
 export type IShop = {
   id: string;
-  address: string;
-  phoneNumber: string;
-  networks: Array<ISocialNetwork>;
+  name: string;
+  description: string;
+  userId: string;
+  address?: string;
+  phoneNumber?: string;
+  networks?: Array<ISocialNetwork>;
 };
 
 export type IShopLight = {
   id: string;
   name: string;
+  description: string;
+  phoneNumber: string;
+  networks?: Array<ISocialNetwork>;
+  profileImage?: string;
+  followers?: number;
+  posts?: Array<IContent>;
 }
 
 export type IAddShop = {
-  address: string;
+  profileImage?: String;
+  name: string;
+  description: string;
+  userId: string;
+  address?: string;
   phoneNumber: string;
-  networks: Array<ISocialNetwork>;
+  networks?: Array<ISocialNetwork>;
 };
 
 export type IShopPreview = {

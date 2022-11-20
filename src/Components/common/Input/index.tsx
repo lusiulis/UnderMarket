@@ -71,6 +71,7 @@ const Input = ({
     <View style={style}>
       <View
         style={[
+          {backgroundColor: backgroundColor? backgroundColor : ''},
           styles.wrapper,
           {alignItems: icon ? 'center' : 'baseline'},
           {borderColor: getBorderColor(), flexDirection: 'row'},
