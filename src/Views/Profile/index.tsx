@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
-import { AppColors, CommonStyles } from '../../Assets/Styles';
+import { AppColors, AppGradientsColors, CommonStyles } from '../../Assets/Styles';
 import GradientButton from '../../Components/Common/Button/GradientButton';
 import AppText from '../../Components/Common/Text';
 import { useNavigation } from '@react-navigation/native';
@@ -16,7 +16,8 @@ import { IAppScreenProps } from '../../Components/Navigation/navigation';
 import AppCamera from '../../Components/Camera';
 import { ICameraFile } from '../../Components/Camera/Camera';
 import { UploadImage } from '../../Utils';
-import { updateProfileImageUser } from '../../Models/User/user.model';
+import { updateProfileImageUser, updateUser } from '../../Models/User/user.model';
+import Input from '../../Components/Common/Input';
 
 
 const Profile = ({ navigation }: IAppScreenProps) => {
@@ -27,7 +28,8 @@ const Profile = ({ navigation }: IAppScreenProps) => {
   const [showModal, setShowModal] = useState(false);
   const [file, setFile] = useState({ uri: '', filename: '' });
   const [visibleModal, setVisibleModal] = useState(false);
-
+  const [update, setUpdate] = useState(false)
+  const [formData, setFormData] = useState({ username: '', email: '' })
 
   useEffect(() => {
     getShop();
@@ -47,6 +49,7 @@ const Profile = ({ navigation }: IAppScreenProps) => {
   };
 
   const handleShowCameraModal = () => {
+    setVisibleModal(false)
     setShowCamera(!showCamera)
   }
 
@@ -59,6 +62,7 @@ const Profile = ({ navigation }: IAppScreenProps) => {
   };
 
   const showShop = () => {
+    setVisibleModal(false)
     if (shopId != '') {
       navigation.navigate('ShopsList')
     } else {
@@ -77,8 +81,28 @@ const Profile = ({ navigation }: IAppScreenProps) => {
     const image = await UploadImage(file)
     await updateProfileImageUser(String(authState.profile?.id), image)
     setFile({ uri: '', filename: '' });
+  }
+
+  const updateProfile = () => {
+    setVisibleModal(false)
+    setUpdate(true);
+    setFormData({ username: authState.profile?.username ? authState.profile?.username : '', email: authState.profile?.email ? authState.profile?.email : '' })
+  }
+
+  const save = async () => {
+    await updateUser(authState.profile?.id ? authState.profile?.id : '', formData.username, formData.email)
+    setAuthenticatedUser({ id: String(authState.profile?.id), username: String(formData.username), email: String(formData.email) })
+    setUpdate(false)
 
   }
+
+  const handleInputChange = (value: string, input: string) => {
+    if (input === 'name') {
+      setFormData({ ...formData, username: value })
+    } else if (input === 'email') {
+      setFormData({ ...formData, email: value })
+    }
+  };
   return (
     <View style={styles.container}>
       {authState.isAunthenticated ? (
@@ -132,30 +156,68 @@ const Profile = ({ navigation }: IAppScreenProps) => {
                   <AppText fontSize={20} font="bolder">
                     Nombre
                   </AppText>
-                  <AppText fontSize={18} >
-                    {authState.profile?.username ? authState.profile?.username : ''}
-                  </AppText>
+                  {update ? (
+                    <Input
+                      backgroundColor={'#FFFFFF4F'}
+                      value={formData.username}
+                      placeHolder="Usuario"
+                      icon="person"
+                      onChange={value => handleInputChange(value, 'name')}
+                    />
+                  ) : (
+                    <AppText fontSize={18} >
+                      {authState.profile?.username ? authState.profile?.username : ''}
+                    </AppText>
+                  )}
+
 
                   <AppText style={CommonStyles.mt_2} fontSize={20} font="bolder">
                     Correo
                   </AppText>
-                  <AppText fontSize={18} >
-                    {authState.profile?.email ? authState.profile?.email : ''}
-                  </AppText>
-                  <TouchableOpacity >
-                    <AppText style={styles.link} fontSize={20} font="bolder" onPress={updateStateModal}>
-                      Cambiar Contraseña
+                  {update ? (
+                    <Input
+                      backgroundColor={'#FFFFFF4F'}
+                      value={formData.email}
+                      placeHolder="Correo"
+                      icon="email"
+                      onChange={value => handleInputChange(value, 'email')}
+                    />
+                  ) : (
+                    <AppText fontSize={18} >
+                      {authState.profile?.email ? authState.profile?.email : ''}
                     </AppText>
-                  </TouchableOpacity>
+                  )}
+                  {update ? (
+                    <View style={[styles.row, { width: '100%', top: 30 }]}>
+                      <GradientButton
+                        colors={AppGradientsColors.cancel}
+                        onPress={() => setUpdate(false)}
+                        style={styles.button}>
+                        <AppText font='bold' style={{ textAlign: 'center' }} fontSize={16}>Cancelar</AppText>
+                      </GradientButton>
+                      <GradientButton
+                        colors={AppGradientsColors.active}
+                        onPress={save}
+                        style={styles.button}>
+                        <AppText font='bold' style={{ textAlign: 'center' }} fontSize={16}>Guardar</AppText>
+                      </GradientButton>
+                    </View>
+                  ) : (
+                    <TouchableOpacity >
+                      <AppText style={styles.link} fontSize={20} font="bolder" onPress={updateStateModal}>
+                        Cambiar Contraseña
+                      </AppText>
+                    </TouchableOpacity>
+                  )
+                  }
                 </View>
-
                 <BottomSheet
                   visible={visibleModal}
                   onBackButtonPress={toggleBottomNavigationView}
                   onBackdropPress={toggleBottomNavigationView}
                 >
                   <View style={styles.sheet}>
-                    <GradientButton colors={['#ffff', '#ffff']} onPress={() => { }} style={styles.button}>
+                    <GradientButton colors={['#ffff', '#ffff']} onPress={updateProfile} style={styles.button}>
                       <AppText color={'black'} fontSize={20} font="bold">
                         Editar Perfil
                       </AppText>
