@@ -4,6 +4,7 @@ type StackParamList = {
   LogIn: undefined;
   SignIn: undefined;
   AppNavigation: AppStackParamList;
+  post: undefined;
 };
 
 type AppStackParamList = {

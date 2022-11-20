@@ -1,4 +1,4 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import {IPaginationPayload} from '..';
 import {getShopPreview} from '../Shop/shop.model';
 import {
@@ -6,11 +6,11 @@ import {
   IContent,
   IContentCard,
   IGetContentsByShopPayload,
+  IPaginatedContentCards,
 } from './Content';
 import {formatContentCardDocs, formatContentDocs} from './utils';
 
 const ContentCollection = firestore().collection('content');
-const ShopCollection = firestore().collection('shop');
 
 export const addContent = async (
   payload: IAddContentPayload,
@@ -22,9 +22,9 @@ export const addContent = async (
 export const getContents = async ({
   limit,
   offset,
-}: IPaginationPayload): Promise<IContentCard[]> => {
+}: IPaginationPayload): Promise<IPaginatedContentCards> => {
   const dbResponse = offset
-    ? await ContentCollection.startAfter(offset).limit(limit).get()
+    ? await ContentCollection.startAt(offset).limit(limit).get()
     : await ContentCollection.limit(limit).get();
   const formatedContents = await Promise.all(
     formatContentCardDocs(dbResponse.docs).map(async content => {
@@ -32,7 +32,10 @@ export const getContents = async ({
       return content;
     }),
   );
-  return formatedContents;
+  return {
+    contents: formatedContents,
+    lastElement: dbResponse.docs[dbResponse.docs.length - 1]
+  };
 };
 
 export const getContentsByShopId = async ({
@@ -45,3 +48,17 @@ export const getContentsByShopId = async ({
     .get();
   return formatContentDocs(dbResponse.docs);
 };
+
+export const getContentSuscription = (onComplete: (result: IContentCard[]) => void) => {
+  ContentCollection.onSnapshot(async (data) => onComplete(await handleSuscriptionResponse(data)))
+}
+
+const handleSuscriptionResponse = async (data: FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>): Promise<IContentCard[]> => {
+  const formatedContents = await Promise.all(
+    formatContentCardDocs(data.docs).map(async content => {
+      content.shop = await getShopPreview(content.shop.id);
+      return content;
+    }),
+  );
+  return formatedContents
+}

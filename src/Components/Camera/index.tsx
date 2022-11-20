@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import GradientButton from '../Common/Button/GradientButton';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {IAppCameraProps, ICameraFile} from './Camera';
+import AppModal from '../Common/AppModal';
 
 type IFlashState = 'off' | 'on' | 'auto';
 
@@ -12,14 +13,14 @@ const AppCamera = ({handleShow}: IAppCameraProps) => {
   const flashStates: IFlashState[] = ['off', 'on', 'auto'];
 
   const devices = useCameraDevices();
-  const cameraRefa = useRef<Camera>(null);
+  const cameraRef = useRef<Camera>(null);
 
-  const [device, setDevice] = useState(devices.back);
+  const [device, setDevice] = useState(devices.front);
   const [active, setActiive] = useState(true);
   const [withFlash, setWithFlash] = useState<IFlashState>(flashStates[0]);
 
   useEffect(() => {
-    setDevice(devices.back);
+    setDevice(devices.front);
   }, [devices]);
 
   const handleQuit = () => {
@@ -46,80 +47,89 @@ const AppCamera = ({handleShow}: IAppCameraProps) => {
     let selectedImagesURIs: ICameraFile[] = [];
     if (result) {
       result.forEach(file => {
-        if (file.uri && file.fileName) selectedImagesURIs.push({uri: file.uri, filename: file.fileName});
+        if (file.uri && file.fileName)
+          selectedImagesURIs.push({uri: file.uri, filename: file.fileName});
       });
       handleShow(selectedImagesURIs);
     }
   };
 
   const handlePicture = () => {
-    //TODO NOT WORKING
-    cameraRefa.current?.takePhoto({
-      flash: 'off',
-    }).then((data) => {
-      console.log('foto: ', data);
-    }).catch(e => console.log('error: ', e));
+    if(cameraRef.current) {
+      cameraRef.current
+      .takePhoto({
+        flash: 'off',
+      })
+      .then(data => {
+        console.log('foto: ', data);
+      })
+      .catch(e => console.log('error: ', e));
+    }else{
+      console.log('efe')
+    }
     
   };
 
   return (
-    <Modal style={styles.container}>
-      {device && (
-        <Camera
-          ref={cameraRefa}
-          device={device}
-          isActive={active}
-          style={StyleSheet.absoluteFill}
-          photo={true}
-          video={true}></Camera>
-      )}
-      <View style={styles.optionsContainer}>
+    <AppModal show={active}>
+      <>
+        {device && (
+          <Camera
+            ref={cameraRef}
+            device={device}
+            isActive={active}
+            style={StyleSheet.absoluteFill}
+            photo={true}
+            video={true}></Camera>
+        )}
+        <View style={styles.optionsContainer}>
+          <Icon
+            style={styles.option}
+            name="close"
+            color="white"
+            size={20}
+            onPress={handleQuit}
+          />
+          <Icon
+            style={styles.option}
+            name="flip-camera-ios"
+            color="white"
+            size={20}
+            onPress={handleCameraChange}
+          />
+          <Icon
+            style={styles.option}
+            name={
+              withFlash === 'on'
+                ? 'flash-on'
+                : withFlash === 'off'
+                ? 'flash-off'
+                : 'flash-auto'
+            }
+            color="white"
+            size={20}
+            onPress={handleFlashChange}
+          />
+        </View>
         <Icon
-          style={styles.option}
-          name="close"
-          color="white"
+          style={styles.imagesOption}
+          name="image-search"
           size={20}
-          onPress={handleQuit}
-        />
-        <Icon
-          style={styles.option}
-          name="flip-camera-ios"
           color="white"
-          size={20}
-          onPress={handleCameraChange}
+          onPress={handleGalery}
         />
-        <Icon
-          style={styles.option}
-          name={
-            withFlash === 'on'
-              ? 'flash-on'
-              : withFlash === 'off'
-              ? 'flash-off'
-              : 'flash-auto'
-          }
-          color="white"
-          size={20}
-          onPress={handleFlashChange}
-        />
-      </View>
-      <Icon
-        style={styles.imagesOption}
-        name="image-search"
-        size={20}
-        color="white"
-        onPress={handleGalery}
-      />
-      <GradientButton onPress={handlePicture} style={styles.capture}>
-        <View
-          style={{
-            height: '100%',
-            width: '100%',
-            backgroundColor: 'white',
-            borderRadius: 100,
-          }}
-        />
-      </GradientButton>
-    </Modal>
+        <GradientButton onPress={handlePicture} style={styles.capture}>
+          <View
+            style={{
+              height: '100%',
+              width: '100%',
+              backgroundColor: 'white',
+              borderRadius: 100,
+            }}
+          />
+        </GradientButton>
+      </>
+    </AppModal>
   );
 };
 
