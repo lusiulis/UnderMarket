@@ -24,6 +24,7 @@ export type IShopLight = {
   profileImage?: string;
   followers?: number;
   posts?: Array<IContent>;
+  address?: string;
 }
 
 export type IAddShop = {

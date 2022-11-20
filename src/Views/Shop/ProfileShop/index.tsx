@@ -12,7 +12,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { IShopLight, ISocialNetwork } from "../../../Models/Shop/shop"
 import { AuthContext } from "../../../Contexts/appContentProvider"
 import AppModal from "../../../Components/Common/AppModal"
-import { IContentCard } from "../../../Models/Content/Content"
+import UpdateShop from "../UpdateShop"
+import Dialog from "react-native-dialog";
 
 type IModal = {
   selectedShop?: IShopLight;
@@ -24,6 +25,10 @@ const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
   const defaultImage = 'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
   const [data, setData] = useState({ followers: 0, posts: [], networks: Array<ISocialNetwork>() })
   const [loading, setLoading] = useState(true);
+  const [shopUpdateShop, setShopUpdateShop] = useState(false);
+  const [shopSelect, setShopSelect] = useState<IShopLight>();
+  const [visibleModal, setVisibleModal] = useState(false);
+
 
   useEffect(() => {
     if (loading) {
@@ -34,11 +39,17 @@ const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
   const getShop = async (id: string) => {
     const shop = await getShopById(id);
     setData({ followers: shop.followers ? shop.followers : 0, posts: [], networks: shop.networks ? shop.networks : [] })
+    setLoading(false)
   }
 
-  const openNetworks = (data: string) => {
-    if (data == 'whatsapp') {
-      Linking.openURL(`https://wa.me/{shops[0].phoneNumber.replace('+','')}`);
+  const openNetworks = (network: string, link: string) => {
+    if (network == 'whatsapp') {
+      link = 'https://wa.me/506' + selectedShop?.phoneNumber + '?text=Hola.%20¿Me%20das%20información?'
+      Linking.openURL(link);
+    } else if (network == 'facebook') {
+      Linking.openURL('https://es-la.facebook.com/' + link);
+    } else if (network == 'instagram') {
+      Linking.openURL('https://www.instagram.com/' + link);
     }
   }
 
@@ -46,11 +57,17 @@ const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
 
   }
 
+  const updateStateModal = () => {
+    setVisibleModal(false)
+    setShopSelect(selectedShop)
+    setShopUpdateShop(!shopUpdateShop)
+  }
+
   const getNetworks = () => {
     return (
       <>
         {selectedShop?.phoneNumber &&
-          <TouchableOpacity onPress={() => openNetworks('whatsapp')}>
+          <TouchableOpacity onPress={() => openNetworks('whatsapp', '')}>
             <Image
               style={[styles.iconsNetworks, CommonStyles.mt_1]}
               source={require('../../../Assets/Icons/whatsapp.png')}
@@ -60,7 +77,7 @@ const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
         }
         {data.networks.map(net => {
           if (net.network === 'FACEBOOK') {
-            return <TouchableOpacity onPress={() => openNetworks('facebook')}>
+            return <TouchableOpacity onPress={() => openNetworks('facebook', net.link)}>
               <Image
                 style={[styles.iconsNetworks, CommonStyles.mt_1]}
                 source={require('../../../Assets/Icons/facebook.png')}
@@ -68,7 +85,7 @@ const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
             </TouchableOpacity>
           }
           if (net.network === 'INSTAGRAM') {
-            return <TouchableOpacity onPress={() => openNetworks('instagram')}>
+            return <TouchableOpacity onPress={() => openNetworks('instagram', net.link)}>
               <Image
                 style={[styles.iconsNetworks, CommonStyles.mt_1]}
                 source={require('../../../Assets/Icons/instagram.png')}
@@ -81,18 +98,35 @@ const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
     )
   }
 
-
   return (
     <AppModal show={show}>
       <>
         <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']} style={styles.container}>
-          <Icon
-            name="arrow-back-ios"
-            size={25}
-            color="white"
-            style={styles.goBack}
-            onPress={hide}
-          />
+          <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <Icon
+              name="arrow-back-ios"
+              size={25}
+              color="white"
+              style={styles.goBack}
+              onPress={hide}
+            />
+            <Icon
+              size={25}
+              name='menu'
+              style={{ top: '2%', marginLeft: 'auto' }}
+              color='#ffff'
+              onPress={() => setVisibleModal(true)} />
+          </View>
+          <View >
+            <Dialog.Container visible={visibleModal}>
+              <Dialog.Title>Editar Tienda</Dialog.Title>
+              <Dialog.Description>
+                Seguro que deseea editar la tienda?
+              </Dialog.Description>
+              <Dialog.Button label="Cancelar" onPress={() => setVisibleModal(false)} />
+              <Dialog.Button label="Continuar" onPress={updateStateModal} />
+            </Dialog.Container>
+          </View>
           <View style={styles.form}>
             <Image
               style={styles.image}
@@ -131,6 +165,7 @@ const ProfileShop = ({ selectedShop, hide, show }: IModal) => {
           </AppText>
 
         </LinearGradient>
+        <UpdateShop show={shopUpdateShop} shop={shopSelect} hide={updateStateModal} />
       </>
     </AppModal>
   )

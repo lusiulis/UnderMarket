@@ -8,23 +8,28 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { createShop, getUserShops } from "../../../Models/Shop/shop.model";
 import { AppGradientsColors, CommonStyles } from "../../../Assets/Styles";
 import GradientButton from "../../../Components/Common/Button/GradientButton";
-import { ISocialNetwork } from "../../../Models/Shop/shop";
+import { IShopLight, ISocialNetwork } from "../../../Models/Shop/shop";
 import { AuthContext } from "../../../Contexts/appContentProvider";
-import { IAppScreenProps } from "../../../Components/Navigation/navigation";
 import AppCamera from "../../../Components/Camera";
 import { ICameraFile } from "../../../Components/Camera/Camera";
 import AuthWidget from "../../../Components/Widgets/AuthWIdget";
 import { UploadImage } from "../../../Utils";
+import AppModal from "../../../Components/Common/AppModal";
 import {
     ToastAndroid,
     Platform,
 } from 'react-native';
 
-const CreateShop = ({ navigation }: IAppScreenProps) => {
+type IModal = {
+    shop?: IShopLight;
+    hide: () => void;
+    show: boolean;
+  };
+
+const UpdateShop = ( { shop, hide, show }: IModal) => {
     const defaultImage = 'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
     const [showCamera, setShowCamera] = useState(false);
-    const [formData, setFormData] = useState({ name: '', description: '', profileImage: '', phoneNumber: '', address: '', networks: [] as Array<ISocialNetwork> })
-    const [loading, setLoading] = useState(true);
+    const [formData, setFormData] = useState({ name: shop?.name, description: shop?.description, profileImage: shop?.profileImage, phoneNumber: shop?.phoneNumber, address: shop?.address, networks: shop?.networks })
     const { authState } = useContext(AuthContext);
     const [accordionState, SetAccordionState] = useState(false)
     const [updatedHeight, setUpdatedHeight] = useState(0)
@@ -32,18 +37,6 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
     const [instagram, setInstagram] = useState('')
     const [file, setFile] = useState({ uri: '', filename: '' });
 
-    useEffect(() => {
-        if (loading) {
-            getShop();
-        }
-    }, [])
-
-    const getShop = async () => {
-        const shops = await getUserShops(String(authState.profile?.id))
-        if (shops.length > 0) {
-            setLoading(false);
-        }
-    }
 
     const handleShowCameraModal = () => {
         setShowCamera(!showCamera)
@@ -75,6 +68,7 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
     }
 
     const saveShop = async () => {
+        console.log(formData)
         let networks: Array<ISocialNetwork> = [];
         if (facebook !== '') {
             networks.push({ network: 'FACEBOOK', link: facebook })
@@ -86,16 +80,13 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
             const image = await UploadImage(file)
             setFormData({ ...formData, profileImage: image })
         }
-        await createShop({ ...formData, userId: String(authState.profile?.id) }, networks ? networks : []).then(x => {
+       /* await createShop({ ...formData, userId: String(authState.profile?.id) }, networks ? networks : []).then(x => {
             if (Platform.OS === 'android') {
-                ToastAndroid.show('Tienda creada correctamente', ToastAndroid.SHORT)
+                ToastAndroid.show('Tienda actualizado correctamente', ToastAndroid.SHORT)
             }
-            navigation.navigate('Profile');
         }).catch(error => {
-            if (Platform.OS === 'android') {
-                ToastAndroid.show('Error al crear la tienda', ToastAndroid.SHORT)
-            }
-        });
+            console.log(error)
+        });*/
     }
 
     const accordion = () => {
@@ -106,10 +97,6 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
             setUpdatedHeight(160)
         }
     }
-
-    const handleGoBack = () => {
-        navigation.navigate('Profile');
-    };
 
     const handleModalShowChange = (file?: ICameraFile[]) => {
         if (file) {
@@ -122,6 +109,8 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
     return (
         <>
             {authState.isAunthenticated ? (
+                <>
+                <AppModal show={show}>
                 <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']}
                     style={styles.container}>
                     <>
@@ -135,7 +124,7 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
                                         size={25}
                                         color="white"
                                         style={styles.goBack}
-                                        onPress={handleGoBack}
+                                        onPress={hide}
                                     />
                                     <View style={styles.content}>
                                         <Image
@@ -220,11 +209,11 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
                                         <View style={styles.row}>
                                             <GradientButton
                                                 colors={AppGradientsColors.cancel}
-                                                onPress={handleGoBack}
+                                                onPress={hide}
                                                 style={styles.button}>
                                                 <AppText font='bold' style={{ textAlign: 'center' }} fontSize={18}>Cancelar</AppText>
                                             </GradientButton>
-                                            <GradientButton style={styles.button} onPress={saveShop} disabled={validateForm()}>
+                                            <GradientButton style={styles.button} onPress={saveShop}>
                                                 <AppText font="bold" style={{ textAlign: 'center' }} fontSize={18}>
                                                     Guardar
                                                 </AppText>
@@ -238,6 +227,9 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
                     </>
 
                 </LinearGradient>
+                </AppModal>
+                </>
+                
             ) : (
                 <AuthWidget />
             )}
@@ -307,4 +299,4 @@ const styles = StyleSheet.create({
     },
 
 });
-export default CreateShop;
+export default UpdateShop;

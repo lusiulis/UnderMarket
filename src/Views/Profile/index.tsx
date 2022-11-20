@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, Button, TouchableOpacity, ScrollView } from 'react-native';
 import { AppColors, AppGradientsColors, CommonStyles } from '../../Assets/Styles';
 import GradientButton from '../../Components/Common/Button/GradientButton';
 import AppText from '../../Components/Common/Text';
@@ -18,7 +18,10 @@ import { ICameraFile } from '../../Components/Camera/Camera';
 import { UploadImage } from '../../Utils';
 import { updateProfileImageUser, updateUser } from '../../Models/User/user.model';
 import Input from '../../Components/Common/Input';
-
+import {
+  ToastAndroid,
+  Platform,
+} from 'react-native';
 
 const Profile = ({ navigation }: IAppScreenProps) => {
   const { authState, logOut, setAuthenticatedUser } = useContext(AuthContext);
@@ -51,6 +54,7 @@ const Profile = ({ navigation }: IAppScreenProps) => {
   const handleShowCameraModal = () => {
     setVisibleModal(false)
     setShowCamera(!showCamera)
+
   }
 
   const handleModalShowChange = (file?: ICameraFile[]) => {
@@ -77,9 +81,16 @@ const Profile = ({ navigation }: IAppScreenProps) => {
   }
 
   const saveFile = async () => {
-    console.log(file)
     const image = await UploadImage(file)
-    await updateProfileImageUser(String(authState.profile?.id), image)
+    await updateProfileImageUser(String(authState.profile?.id), image).then(x => {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Foto actualizada correctamente', ToastAndroid.SHORT)
+      }
+    }).catch(error => {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Error al actualizar la foto', ToastAndroid.SHORT)
+      }
+    })
     setFile({ uri: '', filename: '' });
   }
 
@@ -90,7 +101,15 @@ const Profile = ({ navigation }: IAppScreenProps) => {
   }
 
   const save = async () => {
-    await updateUser(authState.profile?.id ? authState.profile?.id : '', formData.username, formData.email)
+    await updateUser(authState.profile?.id ? authState.profile?.id : '', formData.username, formData.email).then(x => {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Usuario actualizado correctamente', ToastAndroid.SHORT)
+      }
+    }).catch(error => {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Error al actualizar el usuario', ToastAndroid.SHORT)
+      }
+    })
     setAuthenticatedUser({ id: String(authState.profile?.id), username: String(formData.username), email: String(formData.email) })
     setUpdate(false)
 
@@ -121,125 +140,127 @@ const Profile = ({ navigation }: IAppScreenProps) => {
                   color='#ffff'
                   onPress={toggleBottomNavigationView} />
               </View>
-              <View>
+              <ScrollView>
+                <View>
 
-                <View style={styles.contentProfile}>
-                  {file.filename === '' ? (
-                    <>
-                      <Image
-                        source={{
-                          uri: authState.profile?.profileImage ? authState.profile.profileImage : defaultImage,
-                        }}
-                        style={styles.imageStyle}
-                      />
-                      <Icons name='camera-enhance' size={40} style={styles.camera} color='black' onPress={handleShowCameraModal} />
-                    </>
+                  <View style={styles.contentProfile}>
+                    {file.filename === '' ? (
+                      <>
+                        <Image
+                          source={{
+                            uri: authState.profile?.profileImage ? authState.profile.profileImage : defaultImage,
+                          }}
+                          style={styles.imageStyle}
+                        />
+                        <Icons name='camera-enhance' size={40} style={styles.camera} color='black' onPress={handleShowCameraModal} />
+                      </>
 
-                  ) : (
-                    <>
-                      <Image
-                        source={{
-                          uri: file.filename ? file.uri : defaultImage,
-                        }}
-                        style={styles.imageStyle}
-                      />
-                      <View style={styles.row}>
-                        <Icons name='cancel' size={40} style={{ backgroundColor: 'rgba(0, 0, 0, 0.3);', borderRadius: 100 }} color='#A00000' onPress={cancel} />
-                        <Icons name='check' size={40} style={{ backgroundColor: 'rgba(0, 0, 0, 0.3);', borderRadius: 100 }} color='green' onPress={saveFile} />
-                      </View>
-                    </>
-                  )}
+                    ) : (
+                      <>
+                        <Image
+                          source={{
+                            uri: file.filename ? file.uri : defaultImage,
+                          }}
+                          style={styles.imageStyle}
+                        />
+                        <View style={styles.row}>
+                          <Icons name='cancel' size={40} style={{ backgroundColor: 'rgba(0, 0, 0, 0.3);', borderRadius: 100 }} color='#A00000' onPress={cancel} />
+                          <Icons name='check' size={40} style={{ backgroundColor: 'rgba(0, 0, 0, 0.3);', borderRadius: 100 }} color='green' onPress={saveFile} />
+                        </View>
+                      </>
+                    )}
 
-
-                </View>
-                <View style={styles.content}>
-                  <AppText fontSize={20} font="bolder">
-                    Nombre
-                  </AppText>
-                  {update ? (
-                    <Input
-                      backgroundColor={'#FFFFFF4F'}
-                      value={formData.username}
-                      placeHolder="Usuario"
-                      icon="person"
-                      onChange={value => handleInputChange(value, 'name')}
-                    />
-                  ) : (
-                    <AppText fontSize={18} >
-                      {authState.profile?.username ? authState.profile?.username : ''}
-                    </AppText>
-                  )}
-
-
-                  <AppText style={CommonStyles.mt_2} fontSize={20} font="bolder">
-                    Correo
-                  </AppText>
-                  {update ? (
-                    <Input
-                      backgroundColor={'#FFFFFF4F'}
-                      value={formData.email}
-                      placeHolder="Correo"
-                      icon="email"
-                      onChange={value => handleInputChange(value, 'email')}
-                    />
-                  ) : (
-                    <AppText fontSize={18} >
-                      {authState.profile?.email ? authState.profile?.email : ''}
-                    </AppText>
-                  )}
-                  {update ? (
-                    <View style={[styles.row, { width: '100%', top: 30 }]}>
-                      <GradientButton
-                        colors={AppGradientsColors.cancel}
-                        onPress={() => setUpdate(false)}
-                        style={styles.button}>
-                        <AppText font='bold' style={{ textAlign: 'center' }} fontSize={16}>Cancelar</AppText>
-                      </GradientButton>
-                      <GradientButton
-                        colors={AppGradientsColors.active}
-                        onPress={save}
-                        style={styles.button}>
-                        <AppText font='bold' style={{ textAlign: 'center' }} fontSize={16}>Guardar</AppText>
-                      </GradientButton>
-                    </View>
-                  ) : (
-                    <TouchableOpacity >
-                      <AppText style={styles.link} fontSize={20} font="bolder" onPress={updateStateModal}>
-                        Cambiar Contraseña
-                      </AppText>
-                    </TouchableOpacity>
-                  )
-                  }
-                </View>
-                <BottomSheet
-                  visible={visibleModal}
-                  onBackButtonPress={toggleBottomNavigationView}
-                  onBackdropPress={toggleBottomNavigationView}
-                >
-                  <View style={styles.sheet}>
-                    <GradientButton colors={['#ffff', '#ffff']} onPress={updateProfile} style={styles.button}>
-                      <AppText color={'black'} fontSize={20} font="bold">
-                        Editar Perfil
-                      </AppText>
-                    </GradientButton>
-
-                    <GradientButton colors={['#ffff', '#ffff']} onPress={showShop} style={styles.button}>
-                      <AppText color={'black'} fontSize={20} font="bold">
-                        {shopId != '' ? 'Mis Tiendas' : 'Crear Tienda'}
-                      </AppText>
-
-                    </GradientButton>
-
-                    <GradientButton colors={['#ffff', '#ffff']} onPress={logOut} style={styles.button}>
-                      <AppText color={'red'} fontSize={20} font="bold">
-                        Cerrar Sesión
-                      </AppText>
-                    </GradientButton>
 
                   </View>
+                  <View style={styles.content}>
+                    <AppText fontSize={20} font="bolder">
+                      Nombre
+                    </AppText>
+                    {update ? (
+                      <Input
+                        backgroundColor={'#FFFFFF4F'}
+                        value={formData.username}
+                        placeHolder="Usuario"
+                        icon="person"
+                        onChange={value => handleInputChange(value, 'name')}
+                      />
+                    ) : (
+                      <AppText fontSize={18} >
+                        {String(authState.profile?.username)}
+                      </AppText>
+                    )}
 
-                </BottomSheet>
-              </View>
+
+                    <AppText style={CommonStyles.mt_2} fontSize={20} font="bolder">
+                      Correo
+                    </AppText>
+                    {update ? (
+                      <Input
+                        backgroundColor={'#FFFFFF4F'}
+                        value={formData.email}
+                        placeHolder="Correo"
+                        icon="email"
+                        onChange={value => handleInputChange(value, 'email')}
+                      />
+                    ) : (
+                      <AppText fontSize={18} >
+                        {authState.profile?.email ? authState.profile?.email : ''}
+                      </AppText>
+                    )}
+                    {update ? (
+                      <View style={[styles.row, { width: '100%', top: 30 }]}>
+                        <GradientButton
+                          colors={AppGradientsColors.cancel}
+                          onPress={() => setUpdate(false)}
+                          style={styles.button}>
+                          <AppText font='bold' style={{ textAlign: 'center' }} fontSize={16}>Cancelar</AppText>
+                        </GradientButton>
+                        <GradientButton
+                          colors={AppGradientsColors.active}
+                          onPress={save}
+                          style={styles.button}>
+                          <AppText font='bold' style={{ textAlign: 'center' }} fontSize={16}>Guardar</AppText>
+                        </GradientButton>
+                      </View>
+                    ) : (
+                      <TouchableOpacity >
+                        <AppText style={styles.link} fontSize={20} font="bolder" onPress={updateStateModal}>
+                          Cambiar Contraseña
+                        </AppText>
+                      </TouchableOpacity>
+                    )
+                    }
+                  </View>
+                  <BottomSheet
+                    visible={visibleModal}
+                    onBackButtonPress={toggleBottomNavigationView}
+                    onBackdropPress={toggleBottomNavigationView}
+                  >
+                    <View style={styles.sheet}>
+                      <GradientButton colors={['#ffff', '#ffff']} onPress={updateProfile} style={styles.button}>
+                        <AppText color={'black'} fontSize={20} font="bold">
+                          Editar Perfil
+                        </AppText>
+                      </GradientButton>
+
+                      <GradientButton colors={['#ffff', '#ffff']} onPress={showShop} style={styles.button}>
+                        <AppText color={'black'} fontSize={20} font="bold">
+                          {shopId != '' ? 'Mis Tiendas' : 'Crear Tienda'}
+                        </AppText>
+
+                      </GradientButton>
+
+                      <GradientButton colors={['#ffff', '#ffff']} onPress={logOut} style={styles.button}>
+                        <AppText color={'red'} fontSize={20} font="bold">
+                          Cerrar Sesión
+                        </AppText>
+                      </GradientButton>
+
+                    </View>
+
+                  </BottomSheet>
+                </View>
+              </ScrollView>
               <UpdatePassword show={showModal} hide={updateStateModal} />
             </LinearGradient>
           )

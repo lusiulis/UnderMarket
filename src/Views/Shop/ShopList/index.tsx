@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import GradientButton from "../../../Components/Common/Button/GradientButton"
 import AppText from "../../../Components/Common/Text"
 import { IAppScreenProps } from "../../../Components/Navigation/navigation";
+import AuthWidget from "../../../Components/Widgets/AuthWIdget";
 import { AuthContext } from "../../../Contexts/appContentProvider";
 import { IShopLight } from "../../../Models/Shop/shop"
 import { getUserShops } from "../../../Models/Shop/shop.model"
@@ -50,44 +51,49 @@ const ShopsList = ({ navigation }: IAppScreenProps) => {
 
     return (
         <>
-            <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']}
-                style={styles.container}>
-                <View style={styles.content}>
-                    <Icon
-                        name="arrow-back-ios"
-                        size={25}
-                        color="white"
-                        style={styles.goBack}
-                        onPress={handleGoBack}
-                    />
-                    <ScrollView >
-                        <>
-                            <GradientButton style={styles.button} onPress={() => newShop()}>
-                                <AppText style={{ textAlign: 'center' }} font="bold" fontSize={16}>
-                                    Crear Tienda
-                                </AppText>
-                            </GradientButton>
+            {authState.isAunthenticated ? (
+                <>
+                    <LinearGradient colors={['#1D5771', '#2A8187', '#46D9B5']}
+                        style={styles.container}>
+                        <View style={styles.content}>
+                            <Icon
+                                name="arrow-back-ios"
+                                size={25}
+                                color="white"
+                                style={styles.goBack}
+                                onPress={handleGoBack}
+                            />
+                            <ScrollView >
+                                <>
+                                    <GradientButton style={styles.button} onPress={() => newShop()}>
+                                        <AppText style={{ textAlign: 'center' }} font="bold" fontSize={16}>
+                                            Crear Tienda
+                                        </AppText>
+                                    </GradientButton>
 
-                            {shops.map(shop => (
-                                <TouchableOpacity onPress={() => viewShop(shop)}>
-                                    <View style={styles.form}>
-                                        <Image
-                                            style={styles.image}
-                                            source={{
-                                                uri: shop.profileImage ? shop.profileImage?.toString() : defaultImage,
-                                            }} />
-                                        <AppText style={{ paddingTop: 20, paddingLeft: 13 }} font="bold" fontSize={18}>{shop.name}</AppText>
-                                    </View>
-                                </TouchableOpacity>
+                                    {shops.map(shop => (
+                                        <TouchableOpacity onPress={() => viewShop(shop)}>
+                                            <View style={styles.form}>
+                                                <Image
+                                                    style={styles.image}
+                                                    source={{
+                                                        uri: shop.profileImage ? shop.profileImage?.toString() : defaultImage,
+                                                    }} />
+                                                <AppText style={{ paddingTop: 20, paddingLeft: 13 }} font="bold" fontSize={18}>{shop.name}</AppText>
+                                            </View>
+                                        </TouchableOpacity>
 
-                            ))}
+                                    ))}
 
-                        </>
-                    </ScrollView>
-                </View>
-            </LinearGradient>
-            <ProfileShop show={showModal} selectedShop={selectedShop} hide={updateStateModal} />
-
+                                </>
+                            </ScrollView>
+                        </View>
+                    </LinearGradient>
+                    <ProfileShop show={showModal} selectedShop={selectedShop} hide={updateStateModal} />
+                </>
+            ) : (
+                <AuthWidget />
+            )}
         </>
 
 
