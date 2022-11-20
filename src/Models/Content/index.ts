@@ -38,15 +38,11 @@ export const getContents = async ({
   };
 };
 
-export const getContentsByShopId = async ({
-  shopId,
-  pagination,
-}: IGetContentsByShopPayload): Promise<IContent[]> => {
-  const dbResponse = await ContentCollection.startAfter(pagination.offset)
-  .limit(pagination.limit)
+export const getContentsByShopId = async (shopId: string): Promise<IContentCard[]> => {
+  const dbResponse = await ContentCollection
     .where('shopId', '==', shopId)
     .get();
-  return formatContentDocs(dbResponse.docs);
+  return formatContentCardDocs(dbResponse.docs);
 };
 
 export const getContentSuscription = (onComplete: (result: IContentCard[]) => void) => {

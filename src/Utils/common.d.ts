@@ -1,1 +1,1 @@
-export type IconName = 'home' | 'person' | 'lock' | 'alternate-email' | 'phone' | 'send';
+export type IconName = 'home' | 'person' | 'lock' | 'alternate-email' | 'phone' | 'send' | 'email';

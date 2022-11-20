@@ -47,7 +47,6 @@ const SearchBar = () => {
       <View style={styles.widgetHeader}>
         <View style={styles.searchContainer}>
           <Input
-            style={CommonStyles}
             value={searchTerm}
             placeHolder="Buscar..."
             onChange={handleSearchBarChange}
