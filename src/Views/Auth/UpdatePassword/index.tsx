@@ -11,14 +11,18 @@ import { updatePassword } from "../../../Models/Auth";
 import { AuthContext } from "../../../Contexts/appContentProvider";
 import { IShopLight } from "../../../Models/Shop/shop";
 import AppModal from "../../../Components/Common/AppModal";
+import {
+    ToastAndroid,
+    Platform,
+} from 'react-native';
 
 type IModal = {
     shop?: IShopLight;
     hide: () => void;
     show: boolean;
-  };
+};
 
-const UpdatePassword = ({show, hide}: IModal) => {
+const UpdatePassword = ({ show, hide }: IModal) => {
     const [form, setForm] = useState({ password: '', confirmPassword: '', oldPassword: '' })
     const navigation = useNavigation();
     const { authState, logOut } = useContext(AuthContext);
@@ -31,68 +35,84 @@ const UpdatePassword = ({show, hide}: IModal) => {
 
     const savePassword = async () => {
         if (form.confirmPassword !== form.password) {
-            console.log('Las contraseña no coinciden')
+            if (Platform.OS === 'android') {
+                ToastAndroid.show('Las contraseña no coinciden', ToastAndroid.SHORT)
+            }
         } else {
-            const resp = await updatePassword(form.oldPassword, form.password, String(authState.profile?.id));
-            console.log(resp)
+            await updatePassword(form.oldPassword, form.password, String(authState.profile?.id)).then(x => {
+                if (Platform.OS === 'android') {
+                    ToastAndroid.show('Contraseña actualizada correctamente', ToastAndroid.SHORT)
+                }
+                hide()
+            }).catch(error => {
+                if (Platform.OS === 'android') {
+                    ToastAndroid.show('Error al actualizar la contraseña', ToastAndroid.SHORT)
+                }
+            });
         }
     };
 
+    const validateForm = () => {
+        return !form.confirmPassword || !form.oldPassword || !form.password;
+    }
+
     return (
         <AppModal show={show}>
-        <LinearGradient colors={AppGradientsColors.active} style={styles.container}>
-            <Icons
-                name="arrow-back-ios"
-                size={25}
-                color="white"
-                style={styles.goBack}
-                onPress={hide}
-            />
-            <AppText font='bold' style={styles.text} fontSize={24}>
-                Cambiar Contraseña
-            </AppText>
-            <View style={styles.shadowContainer}>
-                <Input
-                    secure
-                    icon="lock"
-                    backgroundColor={'#FFFFFF1F'}
-                    value={form.oldPassword}
-                    placeHolder="Contraseña Actual"
-                    onChange={value => handleInputChange(value, 'oldPassword')}
-                />
-                <Input
-                    secure
-                    icon="lock"
-                    backgroundColor={'#FFFFFF1F'}
-                    value={form.password}
-                    placeHolder="Nueva Contraseña"
-                    onChange={value => handleInputChange(value, 'password')}
-                />
-                <Input
-                    secure
-                    icon="lock"
-                    value={form.confirmPassword}
-                    backgroundColor={'#FFFFFF1F'}
-                    placeHolder="Confirmar Contraseña"
-                    onChange={value => handleInputChange(value, 'confirmPassword')}
-                />
-
-            </View>
-            <View style={styles.row}>
-                <GradientButton
-                    colors={AppGradientsColors.cancel}
+            <LinearGradient colors={AppGradientsColors.active} style={styles.container}>
+                <Icons
+                    name="arrow-back-ios"
+                    size={25}
+                    color="white"
+                    style={styles.goBack}
                     onPress={hide}
-                    style={styles.button}>
-                    <AppText font='bold' style={{ textAlign: 'center' }} fontSize={20}>Cancelar</AppText>
-                </GradientButton>
-                <GradientButton
-                    colors={AppGradientsColors.base}
-                    onPress={savePassword}
-                    style={styles.button}>
-                    <AppText font='bold' style={{ textAlign: 'center' }} fontSize={20}>Guardar</AppText>
-                </GradientButton>
-            </View>
-        </LinearGradient>
+                />
+                <AppText font='bold' style={styles.text} fontSize={24}>
+                    Cambiar Contraseña
+                </AppText>
+                <View style={styles.shadowContainer}>
+                    <Input
+                        secure
+                        icon="lock"
+                        backgroundColor={'#FFFFFF1F'}
+                        value={form.oldPassword}
+                        placeHolder="Contraseña Actual"
+                        onChange={value => handleInputChange(value, 'oldPassword')}
+                    />
+                    <Input
+                        secure
+                        icon="lock"
+                        backgroundColor={'#FFFFFF1F'}
+                        value={form.password}
+                        placeHolder="Nueva Contraseña"
+                        onChange={value => handleInputChange(value, 'password')}
+                    />
+                    <Input
+                        secure
+                        icon="lock"
+                        value={form.confirmPassword}
+                        backgroundColor={'#FFFFFF1F'}
+                        placeHolder="Confirmar Contraseña"
+                        onChange={value => handleInputChange(value, 'confirmPassword')}
+                    />
+
+                </View>
+                <View style={styles.row}>
+                    <GradientButton
+                        colors={AppGradientsColors.cancel}
+                        onPress={hide}
+                        style={styles.button}>
+                        <AppText font='bold' style={{ textAlign: 'center' }} fontSize={20}>Cancelar</AppText>
+                    </GradientButton>
+                    <GradientButton
+                        colors={AppGradientsColors.base}
+                        onPress={savePassword}
+                        style={styles.button}
+                        disabled={validateForm()}
+                    >
+                        <AppText font='bold' style={{ textAlign: 'center' }} fontSize={20}>Guardar</AppText>
+                    </GradientButton>
+                </View>
+            </LinearGradient>
         </AppModal>
     )
 }

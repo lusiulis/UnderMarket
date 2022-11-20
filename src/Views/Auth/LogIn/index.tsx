@@ -1,17 +1,21 @@
-import {useContext, useState} from 'react';
-import {View, Image, StyleSheet} from 'react-native';
-import {CommonStyles} from '../../../Assets/Styles';
+import { useContext, useState } from 'react';
+import { View, Image, StyleSheet } from 'react-native';
+import { CommonStyles } from '../../../Assets/Styles';
 import GradientButton from '../../../Components/Common/Button/GradientButton';
 import Input from '../../../Components/Common/Input';
 import AppText from '../../../Components/Common/Text';
 import GradientText from '../../../Components/Common/Text/GradientText';
-import {login} from '../../../Models/Auth';
-import {AuthContext} from '../../../Contexts/appContentProvider';
-import {IAppScreenProps} from '../../../Components/Navigation/navigation';
-import {ScrollView} from 'react-native-gesture-handler';
+import { login } from '../../../Models/Auth';
+import { AuthContext } from '../../../Contexts/appContentProvider';
+import { IAppScreenProps } from '../../../Components/Navigation/navigation';
+import { ScrollView } from 'react-native-gesture-handler';
+import {
+  ToastAndroid,
+  Platform,
+} from 'react-native';
 
-const LogIn = ({navigation}: IAppScreenProps) => {
-  const {setAuthenticatedUser} = useContext(AuthContext);
+const LogIn = ({ navigation }: IAppScreenProps) => {
+  const { setAuthenticatedUser } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     username: '',
@@ -19,11 +23,11 @@ const LogIn = ({navigation}: IAppScreenProps) => {
   });
 
   const handleUsernameChage = (username: string) => {
-    setFormData({...formData, username: username});
+    setFormData({ ...formData, username: username });
   };
 
   const handlePasswordChage = (password: string) => {
-    setFormData({...formData, password: password});
+    setFormData({ ...formData, password: password });
   };
 
   const handleLogIn = async () => {
@@ -32,15 +36,22 @@ const LogIn = ({navigation}: IAppScreenProps) => {
       setAuthenticatedUser({
         id: response.data.id,
         profileImage: response.data.get('profileImage')?.toString(),
+        email: response.data.get('email'),
+        username: response.data.get('username')
       });
+
       navigation.navigate('AppNavigation');
+    } else {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Las credenciales son incorrectas', ToastAndroid.SHORT)
+      }
     }
   };
 
-  const handleForgotPassword = () => {};
+  const handleForgotPassword = () => { };
 
   const handleSignIn = () => {
-    
+    navigation.navigate('SignIn')
   };
 
   return (
@@ -74,7 +85,7 @@ const LogIn = ({navigation}: IAppScreenProps) => {
               value={formData.password}
               placeHolder="Contraseña"
               secure
-              style={[styles.input, {marginTop: 10}]}
+              style={[styles.input, { marginTop: 10 }]}
             />
           </View>
           <GradientButton style={styles.button} onPress={handleLogIn}>

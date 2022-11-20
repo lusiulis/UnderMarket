@@ -1,30 +1,34 @@
-import {Camera} from 'react-native-vision-camera';
-import {View, StyleSheet, Image} from 'react-native';
+import { Camera } from 'react-native-vision-camera';
+import { View, StyleSheet, Image } from 'react-native';
 import AppCamera from '../../Components/Camera';
-import {useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {AppGradientsColors, CommonStyles} from '../../Assets/Styles';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { AppGradientsColors, CommonStyles } from '../../Assets/Styles';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AppText from '../../Components/Common/Text';
-import {ICameraFile} from '../../Components/Camera/Camera';
-import {AuthContext} from '../../Contexts/appContentProvider';
+import { ICameraFile } from '../../Components/Camera/Camera';
+import { AuthContext } from '../../Contexts/appContentProvider';
 import AuthWidget from '../../Components/Widgets/AuthWIdget';
 import GradientWrapper from '../../Components/Common/GradientWrapper';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import GradientButton from '../../Components/Common/Button/GradientButton';
 import Input from '../../Components/Common/Input';
-import {IContentType} from '../../Models/Content/Content';
+import { IContentType } from '../../Models/Content/Content';
 import AppSelect from '../../Components/Common/Input/Select';
-import {getUserShops} from '../../Models/Shop/shop.model';
-import {IScreenProps} from '../../Components/Navigation/navigation';
-import {ICategory, IDivition} from '../../Models/Category/Category';
-import {getAllDivitions} from '../../Models/Category';
-import {addContent} from '../../Models/Content';
+import { getUserShops } from '../../Models/Shop/shop.model';
+import { IScreenProps } from '../../Components/Navigation/navigation';
+import { ICategory, IDivition } from '../../Models/Category/Category';
+import { getAllDivitions } from '../../Models/Category';
+import { addContent } from '../../Models/Content';
 import GradientText from '../../Components/Common/Text/GradientText';
-import {UploadImage} from '../../Utils';
-import {Picker} from '@react-native-picker/picker';
-import {IShopLight} from '../../Models/Shop/shop';
+import { UploadImage } from '../../Utils';
+import { Picker } from '@react-native-picker/picker';
+import { IShopLight } from '../../Models/Shop/shop';
 import CategorySelector from '../../Components/Widgets/Category/CategorySelector';
+import {
+  ToastAndroid,
+  Platform,
+} from 'react-native';
 
 const cameraPermissions = async () => {
   const cameraPermission = await Camera.getCameraPermissionStatus();
@@ -41,9 +45,9 @@ type IFormPost = {
   contentType: IContentType;
   price: number;
 };
-const Post = ({navigation}: IScreenProps) => {
+const Post = ({ navigation }: IScreenProps) => {
   cameraPermissions();
-  const {authState} = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
   const [showCamera, setShowCamera] = useState(true);
   const [formData, setFormData] = useState<IFormPost>({
     media: [],
@@ -81,7 +85,7 @@ const Post = ({navigation}: IScreenProps) => {
   }, [authState.profile?.id]);
 
   const handleModalShowChange = (files?: ICameraFile[]) => {
-    if (files) setFormData({...formData, media: [...formData.media, ...files]});
+    if (files) setFormData({ ...formData, media: [...formData.media, ...files] });
     setShowCamera(!showCamera);
   };
 
@@ -92,17 +96,17 @@ const Post = ({navigation}: IScreenProps) => {
   const removeMediaElement = (index: number) => {
     const newMedia = formData.media;
     newMedia.splice(index, 1);
-    setFormData({...formData, media: [...newMedia]});
+    setFormData({ ...formData, media: [...newMedia] });
   };
 
   const handleTitleInputChange = (value: string) => {
-    setFormData({...formData, title: value});
+    setFormData({ ...formData, title: value });
   };
   const handleDescriptionInputChange = (value: string) => {
-    setFormData({...formData, description: value});
+    setFormData({ ...formData, description: value });
   };
   const handlePriceInputChange = (value: string) => {
-    setFormData({...formData, price: Number(value)});
+    setFormData({ ...formData, price: Number(value) });
   };
 
   const handleShopChange = (value: IShopLight) => {
@@ -133,7 +137,7 @@ const Post = ({navigation}: IScreenProps) => {
       const uploadedImages = await Promise.all(
         formData.media.map(async media => await UploadImage(media)),
       );
-      const response = await addContent({
+      await addContent({
         shopId: selectedShop.id,
         title: formData.title,
         description: formData.description,
@@ -141,13 +145,21 @@ const Post = ({navigation}: IScreenProps) => {
         contentType: 'image',
         files: uploadedImages,
         categorys: selectedCategories.map(category => category.id),
+      }).then(x => {
+        if (Platform.OS === 'android') {
+          ToastAndroid.show('Publicación agregada correctamente', ToastAndroid.SHORT)
+        }
+        handleClearForm();
+        navigation.navigate('Home')
+      }).catch(error => {
+        if (Platform.OS === 'android') {
+          ToastAndroid.show('Error al agregar la publicación', ToastAndroid.SHORT)
+        }
       });
-      console.log(response);
-      handleClearForm();
-      navigation.navigate('Home')
     } else {
-      console.log('invalid form');
-      console.log(formData);
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Datos incompletos para realizar la publicación', ToastAndroid.SHORT)
+      }
     }
   };
 
@@ -164,11 +176,11 @@ const Post = ({navigation}: IScreenProps) => {
                 {formData.media.slice(0, 3).map((mediaItem, index) => (
                   <View key={index}>
                     <Image
-                      source={{...mediaItem, width: 60}}
+                      source={{ ...mediaItem, width: 60 }}
                       style={styles.image}
                     />
                     <Icon
-                      style={{position: 'absolute', top: 0}}
+                      style={{ position: 'absolute', top: 0 }}
                       name="remove-circle"
                       size={20}
                       color="black"
@@ -186,11 +198,11 @@ const Post = ({navigation}: IScreenProps) => {
               formData.media.map((mediaItem, index) => (
                 <View key={index}>
                   <Image
-                    source={{...mediaItem, width: 60}}
+                    source={{ ...mediaItem, width: 60 }}
                     style={styles.image}
                   />
                   <Icon
-                    style={{position: 'absolute', top: 0}}
+                    style={{ position: 'absolute', top: 0 }}
                     name="remove-circle"
                     size={20}
                     color="black"
@@ -200,15 +212,15 @@ const Post = ({navigation}: IScreenProps) => {
               ))
             )
           ) : (
-            <AppText fontSize={12} style={{textAlign: 'center'}}>
+            <AppText fontSize={12} style={{ textAlign: 'center' }}>
               No hay Imagenes Seleccionadas
             </AppText>
           )}
         </View>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
+        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
           <TouchableOpacity
             onPress={handleShowCameraModal}
-            style={{height: 40, width: 40}}>
+            style={{ height: 40, width: 40 }}>
             <GradientWrapper>
               <Icon name="camera" size={40} onPress={handleShowCameraModal} />
             </GradientWrapper>
@@ -235,7 +247,7 @@ const Post = ({navigation}: IScreenProps) => {
           value={formData.description}
           onChange={handleDescriptionInputChange}
           placeHolder="Descripción del Producto"
-          style={[styles.formInputs, {marginTop: 10}]}
+          style={[styles.formInputs, { marginTop: 10 }]}
           stateManagment
         />
         <View style={styles.priceContainer}>
@@ -258,14 +270,14 @@ const Post = ({navigation}: IScreenProps) => {
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-          <AppText style={{marginLeft: 10}} font="bold" fontSize={15}>
+          <AppText style={{ marginLeft: 10 }} font="bold" fontSize={15}>
             {'Tienda: '}
           </AppText>
           <Picker
             selectedValue={selectedShop}
             onValueChange={itemValue => handleShopChange(itemValue)}
             placeholder="No hay tiendas..."
-            style={{color: 'white', width: '70%'}}>
+            style={{ color: 'white', width: '70%' }}>
             {userShops.map((shop, index) => (
               <Picker.Item key={index} label={shop.name} value={shop} />
             ))}
@@ -289,7 +301,7 @@ const Post = ({navigation}: IScreenProps) => {
             {
               top: 0,
               right: 0,
-              transform: [{translateX: 60}, {rotate: '45deg'}],
+              transform: [{ translateX: 60 }, { rotate: '45deg' }],
             },
           ]}
         />
@@ -300,11 +312,11 @@ const Post = ({navigation}: IScreenProps) => {
             {
               bottom: 0,
               left: 0,
-              transform: [{translateX: -60}, {rotate: '210deg'}],
+              transform: [{ translateX: -60 }, { rotate: '210deg' }],
             },
           ]}
         />
-        <View style={{flex: 1, width: '100%'}}>
+        <View style={{ flex: 1, width: '100%' }}>
           <ScrollView
             style={{
               marginBottom: 60,
@@ -324,7 +336,7 @@ const Post = ({navigation}: IScreenProps) => {
               />
               <GradientButton
                 onPress={submitForm}
-                style={[styles.button, {marginTop: '10%'}]}>
+                style={[styles.button, { marginTop: '10%' }]}>
                 <AppText font="bold" fontSize={20}>
                   Publicar
                 </AppText>
