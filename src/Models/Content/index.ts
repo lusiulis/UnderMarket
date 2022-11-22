@@ -1,4 +1,6 @@
-import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import {IPaginationPayload} from '..';
 import {getShopPreview} from '../Shop/shop.model';
 import {
@@ -15,7 +17,7 @@ const ContentCollection = firestore().collection('content');
 export const addContent = async (
   payload: IAddContentPayload,
 ): Promise<string> => {
-  const dbResponse = await ContentCollection.add(payload);
+  const dbResponse = await ContentCollection.add({timestamp: new Date(), ...payload});
   return dbResponse.id;
 };
 
@@ -34,14 +36,18 @@ export const getContents = async ({
   );
   return {
     contents: formatedContents,
-    lastElement: dbResponse.docs[dbResponse.docs.length - 1]
+    lastElement: dbResponse.docs[dbResponse.docs.length - 1],
   };
 };
 
-export const getContentsByShopId = async (shopId: string): Promise<IContentCard[]> => {
-  const dbResponse = await ContentCollection
-    .where('shopId', '==', shopId)
-    .get();
+export const getContentsByShopId = async (
+  shopId: string,
+): Promise<IContentCard[]> => {
+  const dbResponse = await ContentCollection.where(
+    'shopId',
+    '==',
+    shopId,
+  ).get();
   return formatContentCardDocs(dbResponse.docs);
 };
 
@@ -61,3 +67,4 @@ const handleSuscriptionResponse = async (criteria: string ,data: FirebaseFiresto
   }
   return formatedContents
 }
+

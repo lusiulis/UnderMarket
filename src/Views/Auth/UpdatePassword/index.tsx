@@ -5,7 +5,6 @@ import GradientButton from "../../../Components/Common/Button/GradientButton";
 import Input from '../../../Components/Common/Input';
 import AppText from "../../../Components/Common/Text";
 import Icons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from "@react-navigation/native";
 import { useContext, useState } from "react";
 import { updatePassword } from "../../../Models/Auth";
 import { AuthContext } from "../../../Contexts/appContentProvider";
@@ -24,7 +23,6 @@ type IModal = {
 
 const UpdatePassword = ({ show, hide }: IModal) => {
     const [form, setForm] = useState({ password: '', confirmPassword: '', oldPassword: '' })
-    const navigation = useNavigation();
     const { authState, logOut } = useContext(AuthContext);
 
     const handleInputChange = (value: string, input: string) => {
@@ -36,14 +34,19 @@ const UpdatePassword = ({ show, hide }: IModal) => {
     const savePassword = async () => {
         if (form.confirmPassword !== form.password) {
             if (Platform.OS === 'android') {
-                ToastAndroid.show('Las contraseña no coinciden', ToastAndroid.SHORT)
+                ToastAndroid.show('Las confirmación no coincide', ToastAndroid.SHORT)
             }
         } else {
             await updatePassword(form.oldPassword, form.password, String(authState.profile?.id)).then(x => {
-                if (Platform.OS === 'android') {
-                    ToastAndroid.show('Contraseña actualizada correctamente', ToastAndroid.SHORT)
+                if(x === 'Contraseña actualizada con éxito') {
+                    if (Platform.OS === 'android') {
+                        ToastAndroid.show('Contraseña actualizada correctamente', ToastAndroid.SHORT)
+                        hide()
+                    }
+                }else{
+                    ToastAndroid.show('Contraseña original incorrecta', ToastAndroid.SHORT)
                 }
-                hide()
+                
             }).catch(error => {
                 if (Platform.OS === 'android') {
                     ToastAndroid.show('Error al actualizar la contraseña', ToastAndroid.SHORT)

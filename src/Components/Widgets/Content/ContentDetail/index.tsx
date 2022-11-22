@@ -15,6 +15,7 @@ import GradientWrapper from '../../../Common/GradientWrapper';
 import AppText from '../../../Common/Text';
 import GradientText from '../../../Common/Text/GradientText';
 import ProfileIcon from '../../../Snippets/ProfileIcon';
+import CommentSection from '../../CommentSection';
 
 type IContentDetail = {
   content: IContentCard;
@@ -90,6 +91,7 @@ const ContentDetail = ({content, hide, show}: IContentDetail) => {
                 showIndicator={false}
               />
             </View>
+
             <View
               style={[CommonStyles.transparentContainer, styles.contentCard]}>
               <View style={styles.contentHistory}>
@@ -161,6 +163,7 @@ const ContentDetail = ({content, hide, show}: IContentDetail) => {
                 </GradientButton>
               </View>
             </View>
+            <CommentSection contentId={content.id} />
           </View>
         </ScrollView>
       </LinearGradient>

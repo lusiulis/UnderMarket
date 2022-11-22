@@ -1,5 +1,5 @@
 import {ReactElement} from 'react';
-import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {StyleProp, TouchableOpacity, ViewStyle} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {AppGradientsColors} from '../../../../Assets/Styles';
 
@@ -31,7 +31,7 @@ const GradientButton = ({
 }: IGradientButtonProps) => {
   return (
     <LinearGradient
-      style={style}
+      style={[style, {opacity: disabled ? .7 : 1}]}
       colors={colors ? colors : AppGradientsColors.active}
       start={start}
       end={end}>

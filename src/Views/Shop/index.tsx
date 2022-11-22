@@ -34,7 +34,6 @@ const Shop = ({route, navigation}: IScreenProps) => {
 
   const getShop = async (id: string) => {
     const shop = await getShopById(id);
-    console.log(shop)
     setShopInfo(shop);
   };
 

@@ -5,9 +5,9 @@ import SignIn from '../../Views/Auth/SignIn';
 import AppNavigation from './AppNavigation';
 import CreateShop from '../../Views/Shop/CreateShop';
 import ShopsList from '../../Views/Shop/ShopList';
-import UpdatePassword from '../../Views/Auth/UpdatePassword';
 import ShopProfile from '../../Views/Shop';
 import CreateEvent from '../../Views/Events/CreateEvent';
+import WishList from '../../Views/WishLists';
 
 const Navigation = () => {
   const Stack = createStackNavigator();
@@ -23,6 +23,7 @@ const Navigation = () => {
       <Stack.Screen name="NewEvent" component={CreateEvent} />
       <Stack.Screen name="ShopsList" component={ShopsList} />
       <Stack.Screen name="Shop" component={ShopProfile} />
+      <Stack.Screen name="WishList" component={WishList} />
     </Stack.Navigator>
   );
 };
