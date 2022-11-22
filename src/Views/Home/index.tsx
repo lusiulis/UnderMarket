@@ -5,7 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {CommonStyles} from '../../Assets/Styles';
 import SearchBar from '../../Components/SearchBar';
 import ContentList from '../../Components/Widgets/Content/ContentList';
-import {getContentByTitle, getContents, getContentSuscription} from '../../Models/Content';
+import {getContents, getContentSuscription} from '../../Models/Content';
 import {IContent, IContentCard} from '../../Models/Content/Content';
 
 const Home = () => {

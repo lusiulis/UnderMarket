@@ -27,6 +27,7 @@ export type IContentCard = {
     id: string;
     price: number;
     files: string[];
+    rating?: number;
 }
 
 export type IAddContentPayload = {

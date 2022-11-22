@@ -2,6 +2,7 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import {IPaginationPayload} from '..';
+import { getRatingByContent } from '../Rating/rating.model';
 import {getShopPreview} from '../Shop/shop.model';
 import {
   IAddContentPayload,
@@ -58,6 +59,7 @@ export const getContentSuscription = (onComplete: (result: IContentCard[]) => vo
 const handleSuscriptionResponse = async (criteria: string ,data: FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>): Promise<IContentCard[]> => {
   const formatedContents = await Promise.all(
     formatContentCardDocs(data.docs).map(async content => {
+      content.rating = await getRatingByContent(content.id);
       content.shop = await getShopPreview(content.shop.id);
       return content;
     }),
@@ -65,6 +67,7 @@ const handleSuscriptionResponse = async (criteria: string ,data: FirebaseFiresto
   if(criteria !== ''){
     return formatedContents.filter(x=> x.title.includes(criteria) || x.description.includes(criteria) || x.price.toString().includes(criteria))
   }
+  console.log('aquiiiiiii')
   return formatedContents
 }
 

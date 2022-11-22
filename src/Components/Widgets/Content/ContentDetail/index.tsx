@@ -1,6 +1,6 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {Modal, StyleSheet, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -16,6 +16,14 @@ import AppText from '../../../Common/Text';
 import GradientText from '../../../Common/Text/GradientText';
 import ProfileIcon from '../../../Snippets/ProfileIcon';
 import CommentSection from '../../CommentSection';
+import RatingComponent from '../Rating';
+import { getRatingByContent, getRatingByContentProm } from '../../../../Models/Rating/rating.model';
+import { AuthContext } from '../../../../Contexts/appContentProvider';
+import {
+  ToastAndroid,
+  Platform,
+} from 'react-native';
+import { Rating } from 'react-native-ratings';
 
 type IContentDetail = {
   content: IContentCard;
@@ -29,6 +37,9 @@ const getFormatedImages = (files?: any[]) =>
 const ContentDetail = ({content, hide, show}: IContentDetail) => {
   const [contentCategories, setContentCategories] = useState<ICategory[]>([]);
   const isMounted = useRef(false);
+  const [showBottomMenu, setShowBottomMenu] = useState(false);
+  const [rating, setRating] = useState(1)
+  const { authState } = useContext(AuthContext);
 
   const fetchCategories = useCallback(async () => {
     if (isMounted) {
@@ -38,8 +49,14 @@ const ContentDetail = ({content, hide, show}: IContentDetail) => {
         }),
       );
       setContentCategories(categories);
+      
     }
   }, []);
+
+  const refresh= async()=>{
+    const res = await getRatingByContentProm(content.id)
+    setRating(res)
+  }
 
   useEffect(() => {
     isMounted.current = true;
@@ -55,7 +72,19 @@ const ContentDetail = ({content, hide, show}: IContentDetail) => {
 
   const handleShowNetworks = () => {};
 
+      
+  const handleBottomMenuShow = () => {
+    if(!authState.profile?.id){
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Debes iniciar sesión para poder realizar la calificación', ToastAndroid.SHORT)
+    }
+    }else{
+      setShowBottomMenu(!showBottomMenu);
+    }
+  };
+
   return (
+    <>
     <AppModal show={show} style={styles.modal}>
       <LinearGradient
         colors={['#1D5771', '#2A8187', '#46D9B5']}
@@ -153,7 +182,17 @@ const ContentDetail = ({content, hide, show}: IContentDetail) => {
                     color="black"
                     onPress={handleShare}
                   />
+                  <Rating style={{ padding: 5, backgroundColor: 'red', marginLeft: 20, top:-5 }}
+                        ratingCount={5}
+                        startingValue={rating}
+                        imageSize={20} readonly />
                 </View>
+                <Icon
+                    style={{top:-5, left: -20}}
+                    name="star"
+                    size={24}
+                    color="black"
+                    onPress={handleBottomMenuShow}/>
                 <GradientButton
                   onPress={handleShowNetworks}
                   style={styles.button}>
@@ -168,6 +207,10 @@ const ContentDetail = ({content, hide, show}: IContentDetail) => {
         </ScrollView>
       </LinearGradient>
     </AppModal>
+    { content &&
+      <RatingComponent refresh={refresh} content={content} handleBottomMenuShow={handleBottomMenuShow} showBottomMenu= {showBottomMenu}/>
+    }
+    </>
   );
 };
 
