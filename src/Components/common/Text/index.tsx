@@ -16,6 +16,7 @@ const AppText = ({children, font, fontSize, color, onPress, transparent, style, 
       fontSize: fontSize ? fontSize : 10,
       color: color ? color : 'white',
       opacity: transparent ? 0 : 1,
+      textAlign: 'center'
     },
   });
   return (

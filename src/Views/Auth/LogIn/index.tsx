@@ -61,14 +61,14 @@ const LogIn = ({ navigation }: IAppScreenProps) => {
           style={styles.backgroud}
           source={require('../../../Assets/Images/login-back.png')}
         />
-        <AppText font="bolder" fontSize={50}>
+        <AppText font="bolder" fontSize={40}>
           UnderMarket
         </AppText>
-        <AppText font="bold" fontSize={30}>
+        <AppText font="bold" fontSize={20}>
           The Market For All
         </AppText>
         <View style={styles.form}>
-          <AppText font="bold" fontSize={30}>
+          <AppText font="bold" fontSize={20}>
             Inicio de Sesión
           </AppText>
           <View style={styles.inputContainer}>
@@ -101,12 +101,12 @@ const LogIn = ({ navigation }: IAppScreenProps) => {
             Olvide mi Contraseña
           </GradientText>
           <View style={styles.welcomeContainer}>
-            <AppText font="bold" fontSize={15}>
+            <AppText font="bold" fontSize={12}>
               ¿No tienes cuenta?
             </AppText>
             <GradientText
               font="bold"
-              fontSize={15}
+              fontSize={12}
               style={styles.signinText}
               onPress={handleSignIn}>
               Registrarme

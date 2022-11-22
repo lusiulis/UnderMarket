@@ -23,15 +23,12 @@ const ShopsList = ({navigation}: IAppScreenProps) => {
   const [shops, setShops] = useState(Array<IShopLight>());
   const defaultImage =
     'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (loading) {
       getShops();
     }
   }, []);
-
-  const updateStateModal = () => setShowModal(!showModal);
 
   const getShops = async () => {
     const shopsRes = await getUserShops(String(authState.profile?.id));
@@ -46,11 +43,11 @@ const ShopsList = ({navigation}: IAppScreenProps) => {
   };
 
   const handleGoBack = () => {
-    navigation.navigate('Profile');
+    navigation.goBack();
   };
 
   const viewShop = async (shop: IShopLight) => {
-    navigation.navigate('Shop', {id: shop.id})
+    navigation.navigate('Shop', {id: shop.id});
   };
 
   return (
@@ -58,14 +55,14 @@ const ShopsList = ({navigation}: IAppScreenProps) => {
       <LinearGradient
         colors={['#1D5771', '#2A8187', '#46D9B5']}
         style={styles.container}>
+        <Icon
+          name="close"
+          size={25}
+          color="black"
+          style={styles.goBack}
+          onPress={handleGoBack}
+        />
         <View style={styles.content}>
-          <Icon
-            name="arrow-back-ios"
-            size={25}
-            color="white"
-            style={styles.goBack}
-            onPress={handleGoBack}
-          />
           <ScrollView>
             <>
               <GradientButton style={styles.button} onPress={() => newShop()}>
@@ -110,8 +107,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   goBack: {
-    position: 'relative',
-    top: '4%',
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    padding: 5,
+    backgroundColor: 'white',
+    borderRadius: 100,
+    zIndex: 999,
   },
   content: {
     width: '90%',

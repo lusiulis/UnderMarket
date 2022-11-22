@@ -1,16 +1,33 @@
-import {View, StyleSheet, ViewStyle, Image} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {
+  View,
+  StyleSheet,
+  ViewStyle,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {AppGradientsColors} from '../../../Assets/Styles';
+import GradientButton from '../../Common/Button/GradientButton';
 
 type IProfileIconProps = {
   style?: ViewStyle;
   size?: number;
   focused?: boolean;
-  source?: string
+  source?: string;
+  redirects?: {
+    id: string;
+    isShop: boolean;
+  };
 };
 
-const ProfileIcon = ({style, size, focused, source}: IProfileIconProps) => {
-
+const ProfileIcon = ({
+  style,
+  size,
+  focused,
+  source,
+  redirects,
+}: IProfileIconProps) => {
   const styles = StyleSheet.create({
     profileContainer: {
       display: 'flex',
@@ -26,28 +43,68 @@ const ProfileIcon = ({style, size, focused, source}: IProfileIconProps) => {
     },
   });
 
-  const defaultImage = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
+  const navigation = useNavigation();
+
+  const defaultImage =
+    'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
+
+  const handleProfileIconPress = () => {
+    if (redirects) {
+      redirects.isShop
+        ? navigation.navigate('Shop', {id: redirects.id})
+        : navigation.navigate('Profile', {id: redirects.id});
+    }
+  };
 
   return focused ? (
-    <LinearGradient
-      style={[styles.profileContainer, style]}
-      colors={AppGradientsColors.active}>
+    redirects ? (
+      <GradientButton
+        onPress={handleProfileIconPress}
+        style={[styles.profileContainer, style]}
+        colors={AppGradientsColors.active}>
+        <Image
+          source={{
+            width: size ? size : 35,
+            height: size ? size : 35,
+            uri: source ? source : defaultImage,
+          }}
+          style={styles.imageStyle}
+        />
+      </GradientButton>
+    ) : (
+      <LinearGradient
+        style={[styles.profileContainer, style]}
+        colors={AppGradientsColors.active}>
+        <Image
+          source={{
+            width: size ? size : 35,
+            height: size ? size : 35,
+            uri: source ? source : defaultImage,
+          }}
+          style={styles.imageStyle}
+        />
+      </LinearGradient>
+    )
+  ) : redirects ? (
+    <TouchableOpacity
+      style={[styles.profileContainer, style, {backgroundColor: 'black'}]}
+      onPress={handleProfileIconPress}>
       <Image
         source={{
           width: size ? size : 35,
           height: size ? size : 35,
-          uri: source ? source: defaultImage,
+          uri: source && source !== '' ? source : defaultImage,
         }}
         style={styles.imageStyle}
       />
-    </LinearGradient>
+    </TouchableOpacity>
   ) : (
     <View style={[styles.profileContainer, style, {backgroundColor: 'black'}]}>
       <Image
         source={{
           width: size ? size : 35,
           height: size ? size : 35,
-          uri: source && source !== '' ? source: defaultImage,
+          uri: source && source !== '' ? source : defaultImage,
         }}
         style={styles.imageStyle}
       />

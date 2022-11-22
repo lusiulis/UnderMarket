@@ -34,6 +34,7 @@ import {ICameraFile} from '../../Components/Camera/Camera';
 import Input from '../../Components/Common/Input';
 import {updateUser} from '../../Models/User/user.model';
 import {IUpdateUser} from '../../Models/User/user';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Profile = ({route, navigation}: IScreenProps) => {
   const {authState, logOut} = useContext(AuthContext);
@@ -68,6 +69,11 @@ const Profile = ({route, navigation}: IScreenProps) => {
     id: '',
   });
 
+  const [showAuth, setShowAuth] = useState(true);
+  useFocusEffect(() => {
+    setShowAuth(!(authState.isAunthenticated && authState.profile));
+  });
+
   useEffect(() => {
     isMounted.current = true;
     fetchProfileInfo();
@@ -75,6 +81,14 @@ const Profile = ({route, navigation}: IScreenProps) => {
       isMounted.current = false;
     };
   }, [route.params, authState.profile]);
+
+  useEffect(() => {
+    isMounted.current = true;
+    fetchProfileInfo();
+    return () => {
+      isMounted.current = false;
+    };
+  }, [showAuth]);
 
   const handleBottomMenuShow = () => {
     setShowBottomMenu(!showBottomMenu);
@@ -107,7 +121,7 @@ const Profile = ({route, navigation}: IScreenProps) => {
   const handleWishLists = () => {
     setShowBottomMenu(false);
     navigation.navigate('WishList');
-  }
+  };
 
   const handleImageCancel = () => {
     setSelectedImage(undefined);
@@ -235,104 +249,100 @@ const Profile = ({route, navigation}: IScreenProps) => {
 
   return (
     <LinearGradient colors={AppGradientsColors.base} style={styles.main}>
-      {authState.isAunthenticated ? (
-        <>
-          {authState.profile?.id === profileInfo.id && !showUpdateProfile && (
-            <GradientButton
-              onPress={handleBottomMenuShow}
-              style={styles.menuButton}>
-              <Icon size={25} name="menu" color="#ffff" />
-            </GradientButton>
-          )}
-          <ScrollView contentContainerStyle={styles.container}>
-            {selectedImage ? (
-              <ProfileIcon source={selectedImage.uri} focused size={150} />
-            ) : (
-              <ProfileIcon
-                source={profileInfo.profileImage}
-                focused
-                size={150}
+      {authState.profile?.id === profileInfo.id && !showUpdateProfile && (
+        <GradientButton
+          onPress={handleBottomMenuShow}
+          style={styles.menuButton}>
+          <Icon size={25} name="menu" color="#ffff" />
+        </GradientButton>
+      )}
+      <ScrollView contentContainerStyle={styles.container}>
+        {selectedImage ? (
+          <ProfileIcon source={selectedImage.uri} focused size={150} />
+        ) : (
+          <ProfileIcon source={profileInfo.profileImage} focused size={150} />
+        )}
+        {showUpdateProfile && (
+          <View style={styles.imagesActions}>
+            {selectedImage && (
+              <Icon
+                name="cancel"
+                size={35}
+                color="#C21A1A"
+                onPress={handleImageCancel}
               />
             )}
-            {showUpdateProfile && (
-              <View style={styles.imagesActions}>
-                {selectedImage && (
-                  <Icon
-                    name="cancel"
-                    size={35}
-                    color="#C21A1A"
-                    onPress={handleImageCancel}
-                  />
-                )}
-                <Icon
-                  style={{marginLeft: 'auto'}}
-                  name="camera"
-                  size={35}
-                  color="white"
-                  onPress={() => handleShowCamera()}
-                />
-              </View>
-            )}
-            {!showUpdateProfile ? <ProfileContent /> : <ProfileForm />}
-          </ScrollView>
-          <BottomSheet
-            visible={showBottomMenu}
-            onBackButtonPress={handleBottomMenuShow}
-            onBackdropPress={handleBottomMenuShow}>
-            <View style={styles.sheet}>
-              <View style={{ width: '50%', backgroundColor: 'black', padding: 1, borderRadius: 100, margin: 20}} />
-              <TouchableOpacity onPress={handleWishLists}>
-                <AppText
-                  color={'black'}
-                  fontSize={20}
-                  style={{padding: 10}}
-                  font="bold">
-                  Listas de Deseo
-                </AppText>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={handleUpdateProfile}>
-                <AppText
-                  color={'black'}
-                  fontSize={20}
-                  style={{padding: 10}}
-                  font="bold">
-                  Editar Perfil
-                </AppText>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={handleChangePassword}>
-                <AppText
-                  color={'black'}
-                  fontSize={20}
-                  style={{padding: 10}}
-                  font="bold">
-                  Cambiar Contraseña
-                </AppText>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{padding: 10}} onPress={handleShowShops}>
-                <AppText color={'black'} fontSize={20} font="bold">
-                  Mis Tiendas
-                </AppText>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{padding: 10}} onPress={handleLogOut}>
-                <AppText color={'red'} fontSize={20} font="bold">
-                  Cerrar Sesión
-                </AppText>
-              </TouchableOpacity>
-            </View>
-          </BottomSheet>
-          <UpdatePassword
-            show={showChangePassword}
-            hide={handleChangePassword}
+            <Icon
+              style={{marginLeft: 'auto'}}
+              name="camera"
+              size={35}
+              color="white"
+              onPress={() => handleShowCamera()}
+            />
+          </View>
+        )}
+        {!showUpdateProfile ? <ProfileContent /> : <ProfileForm />}
+      </ScrollView>
+      <BottomSheet
+        visible={showBottomMenu}
+        onBackButtonPress={handleBottomMenuShow}
+        onBackdropPress={handleBottomMenuShow}>
+        <View style={styles.sheet}>
+          <View
+            style={{
+              width: '50%',
+              backgroundColor: 'black',
+              padding: 1,
+              borderRadius: 100,
+              margin: 20,
+            }}
           />
-          {showCamera && <AppCamera handleShow={handleShowCamera} />}
-        </>
-      ) : (
-        <AuthWidget />
-      )}
+          <TouchableOpacity onPress={handleWishLists}>
+            <AppText
+              color={'black'}
+              fontSize={20}
+              style={{padding: 10}}
+              font="bold">
+              Listas de Deseo
+            </AppText>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={handleUpdateProfile}>
+            <AppText
+              color={'black'}
+              fontSize={20}
+              style={{padding: 10}}
+              font="bold">
+              Editar Perfil
+            </AppText>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={handleChangePassword}>
+            <AppText
+              color={'black'}
+              fontSize={20}
+              style={{padding: 10}}
+              font="bold">
+              Cambiar Contraseña
+            </AppText>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{padding: 10}} onPress={handleShowShops}>
+            <AppText color={'black'} fontSize={20} font="bold">
+              Mis Tiendas
+            </AppText>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{padding: 10}} onPress={handleLogOut}>
+            <AppText color={'red'} fontSize={20} font="bold">
+              Cerrar Sesión
+            </AppText>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
+      <UpdatePassword show={showChangePassword} hide={handleChangePassword} />
+      {showCamera && <AppCamera handleShow={handleShowCamera} />}
+      <AuthWidget show={showAuth} />
     </LinearGradient>
   );
 };
