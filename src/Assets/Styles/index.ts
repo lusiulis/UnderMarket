@@ -14,7 +14,7 @@ export const CommonStyles = StyleSheet.create({
   },
   transparentContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    borderRadius: 20,
+    borderRadius: 10,
     alignItems: 'center',
     padding: 10,
   },

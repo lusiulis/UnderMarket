@@ -20,4 +20,12 @@ export type IGradientTextProps = {
   font?: IFont;
   fontSize?: number;
   onPress?: () => void;
+  start?: {
+    x: number;
+    y: number;
+  },
+  end?: {
+    x: number;
+    y: number;
+  }
 };

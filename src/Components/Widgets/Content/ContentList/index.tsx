@@ -3,37 +3,25 @@ import {
   StyleSheet,
   View,
   ViewStyle,
+  TouchableOpacity,
   Image,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
 } from 'react-native';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {AppGradientsColors} from '../../../../Assets/Styles';
-import {HomeContext} from '../../../../Contexts/homeContextProvider';
-import {IContent, IContentCard} from '../../../../Models/Content/Content';
+import {IContentCard} from '../../../../Models/Content/Content';
 import AppModal from '../../../Common/AppModal';
 import AppText from '../../../Common/Text';
 import ProfileIcon from '../../../Snippets/ProfileIcon';
 import ContentDetail from '../ContentDetail';
+import SaveContent from '../SaveContent';
 
 type IContentListProps = {
   contents: IContentCard[];
   style?: ViewStyle;
   onPagination?: () => void;
   refresh?: () => void;
-};
-
-const isCloseToBottom = ({
-  nativeEvent,
-}: NativeSyntheticEvent<NativeScrollEvent>) => {
-  const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
-  const paddingToBottom = 20;
-  return (
-    layoutMeasurement.height + contentOffset.y >=
-    contentSize.height - paddingToBottom
-  );
 };
 
 const ContentList = ({
@@ -44,6 +32,7 @@ const ContentList = ({
 }: IContentListProps) => {
   const [selectedContent, setSelectedContent] = useState<IContentCard>();
   const [showCardModal, setShowCardModal] = useState(false);
+  const [showModalSave, setShowModalSave] = useState(false);
 
   const getFormatedImages = (files?: any[]) =>
     files ? files.map((file: any) => ({img: file})) : [];
@@ -55,6 +44,11 @@ const ContentList = ({
 
   const handleCardCancel = () => {
     setShowCardModal(!showCardModal);
+  };
+
+  const handleSaveContent = (card: IContentCard) => {
+    setSelectedContent(card);
+    setShowModalSave(!showModalSave);
   };
 
   return (
@@ -91,6 +85,7 @@ const ContentList = ({
                       width: '100%',
                     }}
                     showIndicator={false}
+                    preview={false}
                   />
                 </View>
                 <View style={styles.profileContainer}>
@@ -111,6 +106,20 @@ const ContentList = ({
                   <AppText font="bold">Precio:</AppText>
                   <AppText>{'₡'.concat(String(content.price))}</AppText>
                 </View>
+                <View style={styles.actionsContainer}>
+                  <Icon
+                    name="heart"
+                    size={20}
+                    color="black"
+                    onPress={() => handleSaveContent(content)}
+                  />
+                  <Icon
+                    name="cards-playing-heart"
+                    size={20}
+                    color="black"
+                    onPress={() => handleSaveContent(content)}
+                  />
+                </View>
               </View>
             </TouchableOpacity>
           </View>
@@ -122,6 +131,14 @@ const ContentList = ({
           content={selectedContent}
           hide={handleCardCancel}
         />
+      )}
+      {selectedContent && (
+        <AppModal show={showModalSave}>
+          <SaveContent
+            close={() => setShowModalSave(false)}
+            content={selectedContent}
+          />
+        </AppModal>
       )}
     </View>
   );
@@ -168,6 +185,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 10,
     width: '100%',
+  },
+  actionsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 60,
+    marginRight: 'auto',
   },
 });
 

@@ -23,6 +23,9 @@ export type IValidate = {
 };
 
 export type IUpdateUser = {
-  username: string;
-  email: string;
+  id: string;
+  username?: string;
+  email?: string;
+  name?: string;
+  profileImage?: string;
 }

@@ -7,14 +7,18 @@ import GradientButton from '../../Common/Button/GradientButton';
 import AppText from '../../Common/Text';
 import {IScreenProps} from '../../Navigation/navigation';
 
-const AuthWidget = () => {
+type IAuthWidgetProps = {
+  show?: boolean
+}
+
+const AuthWidget = ({show}: IAuthWidgetProps) => {
   const navigation = useNavigation();
   const handleLoginPress = () => {
     navigation.navigate('LogIn');
   };
 
   return (
-    <AppModal>
+    <AppModal show={show}>
       <LinearGradient
         colors={AppGradientsColors.active}
         style={styles.container}>

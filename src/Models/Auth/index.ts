@@ -19,21 +19,17 @@ export const updatePassword = async (oldPassword: string, password: string, id: 
     if (user.get('password') !== oldPassword) {
         return 'La contraseña actual es incorrecta';
     } else {
-        await UsersCollection.doc(id).update({ password: password })
+        console.log('response: ', await UsersCollection.doc(id).update({ password: password }))
         return 'Contraseña actualizada con éxito';
     }
 }
 
-export const signIn = async ({ email, username, password, phoneNumber }: ISingInProps) => {
-    const shopResponse = phoneNumber ? await ShopColletion.add({ phoneNumber }) : false;
-    return !shopResponse ? await UsersCollection.add({
+export const signIn = async ({ email, username, password, name }: ISingInProps) => {
+    const dbResponse = await UsersCollection.add({
         email,
         username,
         password,
-    }) : await UsersCollection.add({
-        email,
-        username,
-        password,
-        shopId: shopResponse.id
-    })
+        name
+    });
+    return dbResponse.id
 }

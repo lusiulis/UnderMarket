@@ -30,7 +30,7 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
     const [updatedHeight, setUpdatedHeight] = useState(0)
     const [facebook, setFacebook] = useState('')
     const [instagram, setInstagram] = useState('')
-    const [file, setFile] = useState({ uri: '', filename: '' });
+    const [file, setFile] = useState<ICameraFile>();
 
     useEffect(() => {
         if (loading) {
@@ -86,6 +86,7 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
             const image = await UploadImage(file)
             setFormData({ ...formData, profileImage: image })
         }
+
         await createShop({ ...formData, userId: String(authState.profile?.id) }, networks ? networks : []).then(x => {
             if (Platform.OS === 'android') {
                 ToastAndroid.show('Tienda creada correctamente', ToastAndroid.SHORT)

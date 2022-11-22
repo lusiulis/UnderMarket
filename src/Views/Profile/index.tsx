@@ -1,342 +1,407 @@
-import { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Image, Button, TouchableOpacity, ScrollView } from 'react-native';
-import { AppColors, AppGradientsColors, CommonStyles } from '../../Assets/Styles';
-import GradientButton from '../../Components/Common/Button/GradientButton';
-import AppText from '../../Components/Common/Text';
-import { useNavigation } from '@react-navigation/native';
-import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { BottomSheet } from 'react-native-btr';
-import Icons from 'react-native-vector-icons/MaterialIcons';
-import { getUserShops } from '../../Models/Shop/shop.model';
-import AuthWidget from '../../Components/Widgets/AuthWIdget';
-import { AuthContext } from '../../Contexts/appContentProvider';
-import UpdatePassword from '../Auth/UpdatePassword';
-import { IAppScreenProps } from '../../Components/Navigation/navigation';
-import AppCamera from '../../Components/Camera';
-import { ICameraFile } from '../../Components/Camera/Camera';
-import { UploadImage } from '../../Utils';
-import { updateProfileImageUser, updateUser } from '../../Models/User/user.model';
-import Input from '../../Components/Common/Input';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {IScreenProps} from '../../Components/Navigation/navigation';
 import {
+  View,
+  StyleSheet,
+  Touchable,
+  TouchableOpacity,
   ToastAndroid,
-  Platform,
 } from 'react-native';
+import {IProfile} from '../../Models/Profile/profile';
+import {getProfileInfo} from '../../Models/Profile';
+import LinearGradient from 'react-native-linear-gradient';
+import {AppGradientsColors, CommonStyles} from '../../Assets/Styles';
+import {AuthContext} from '../../Contexts/appContentProvider';
+import AppText from '../../Components/Common/Text';
+import AuthWidget from '../../Components/Widgets/AuthWIdget';
+import {ScrollView} from 'react-native-gesture-handler';
+import ProfileIcon from '../../Components/Snippets/ProfileIcon';
+import {Initializer, UploadImage} from '../../Utils';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import GradientButton from '../../Components/Common/Button/GradientButton';
+import {BottomSheet} from 'react-native-btr';
+import UpdatePassword from '../Auth/UpdatePassword';
+import AppCamera from '../../Components/Camera';
+import {ICameraFile} from '../../Components/Camera/Camera';
+import Input from '../../Components/Common/Input';
+import {updateUser} from '../../Models/User/user.model';
+import {IUpdateUser} from '../../Models/User/user';
 
-const Profile = ({ navigation }: IAppScreenProps) => {
-  const { authState, logOut, setAuthenticatedUser } = useContext(AuthContext);
-  const defaultImage = 'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255710-stock-illustration-avatar-vector-male-profile-gray.jpg';
+const Profile = ({route, navigation}: IScreenProps) => {
+  const {authState, logOut} = useContext(AuthContext);
+  const [profileInfo, setProfileInfo] = useState<IProfile>(
+    Initializer.IProfile,
+  );
+  const isMounted = useRef(false);
+
+  const fetchProfileInfo = useCallback(async () => {
+    if (isMounted && authState.profile) {
+      const data = await getProfileInfo(
+        route.params && route.params.id
+          ? route.params.id
+          : authState.profile.id,
+      );
+      setFormData({
+        email: data.email,
+        id: data.id,
+        name: data.name,
+        username: data.username,
+      });
+      setProfileInfo(data);
+    }
+  }, [route.params, authState.profile]);
+
+  const [showBottomMenu, setShowBottomMenu] = useState(false);
+  const [showUpdateProfile, setShowUpdateProfile] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [shopId, setShopId] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [file, setFile] = useState({ uri: '', filename: '' });
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [update, setUpdate] = useState(false)
-  const [formData, setFormData] = useState({ username: '', email: '' })
+  const [selectedImage, setSelectedImage] = useState<ICameraFile>();
+  const [formData, setFormData] = useState<IUpdateUser>({
+    id: '',
+  });
 
   useEffect(() => {
-    getShop();
-  })
+    isMounted.current = true;
+    fetchProfileInfo();
+    return () => {
+      isMounted.current = false;
+    };
+  }, [route.params, authState.profile]);
 
-  const getShop = async () => {
-    const shops = await getUserShops(String(authState.profile?.id))
-    if (shops.length > 0) {
-      setShopId(shops[0].id)
-    } else {
-      setShopId('');
-    }
-  }
-
-  const toggleBottomNavigationView = () => {
-    setVisibleModal(!visibleModal);
+  const handleBottomMenuShow = () => {
+    setShowBottomMenu(!showBottomMenu);
   };
 
-  const handleShowCameraModal = () => {
-    setVisibleModal(false)
-    setShowCamera(!showCamera)
-
-  }
-
-  const handleModalShowChange = (file?: ICameraFile[]) => {
-    if (file) {
-      setFile({ uri: file[0]?.uri ? file[0]?.uri : '', filename: file[0]?.filename ? file[0]?.filename : '' })
-      setShowCamera(!showCamera);
-      setAuthenticatedUser({ id: authState.profile?.id ? authState.profile?.id : '', email: authState.profile?.email ? authState.profile?.email : '', username: authState.profile?.username ? authState.profile?.username : '', profileImage: file[0]?.uri ? file[0]?.uri : '' })
-    }
+  const handleUpdateProfile = () => {
+    setShowBottomMenu(false);
+    setShowUpdateProfile(!showUpdateProfile);
   };
 
-  const showShop = () => {
-    setVisibleModal(false)
-    if (shopId != '') {
-      navigation.navigate('ShopsList')
-    } else {
-      navigation.navigate('NewShop')
-    }
-  }
-
-  const updateStateModal = () => setShowModal(!showModal)
-
-  const cancel = () => {
-    setFile({ uri: '', filename: '' });
-  }
-
-  const saveFile = async () => {
-    const image = await UploadImage(file)
-    await updateProfileImageUser(String(authState.profile?.id), image).then(x => {
-      if (Platform.OS === 'android') {
-        ToastAndroid.show('Foto actualizada correctamente', ToastAndroid.SHORT)
-      }
-    }).catch(error => {
-      if (Platform.OS === 'android') {
-        ToastAndroid.show('Error al actualizar la foto', ToastAndroid.SHORT)
-      }
-    })
-    setFile({ uri: '', filename: '' });
-  }
-
-  const updateProfile = () => {
-    setVisibleModal(false)
-    setUpdate(true);
-    setFormData({ username: authState.profile?.username ? authState.profile?.username : '', email: authState.profile?.email ? authState.profile?.email : '' })
-  }
-
-  const save = async () => {
-    await updateUser(authState.profile?.id ? authState.profile?.id : '', formData.username, formData.email).then(x => {
-      if (Platform.OS === 'android') {
-        ToastAndroid.show('Usuario actualizado correctamente', ToastAndroid.SHORT)
-      }
-    }).catch(error => {
-      if (Platform.OS === 'android') {
-        ToastAndroid.show('Error al actualizar el usuario', ToastAndroid.SHORT)
-      }
-    })
-    setAuthenticatedUser({ id: String(authState.profile?.id), username: String(formData.username), email: String(formData.email) })
-    setUpdate(false)
-
-  }
-
-  const handleInputChange = (value: string, input: string) => {
-    if (input === 'name') {
-      setFormData({ ...formData, username: value })
-    } else if (input === 'email') {
-      setFormData({ ...formData, email: value })
-    }
+  const handleShowShops = () => {
+    setShowBottomMenu(false);
+    navigation.navigate('ShopsList');
   };
+
+  const handleChangePassword = () => {
+    setShowChangePassword(!showChangePassword);
+  };
+
+  const handleLogOut = () => {
+    logOut();
+    setShowBottomMenu(false);
+  };
+
+  const handleShowCamera = (files?: ICameraFile[]) => {
+    if (files && files.length > 0) setSelectedImage(files[0]);
+    setShowCamera(!showCamera);
+  };
+
+  const handleWishLists = () => {
+    setShowBottomMenu(false);
+    navigation.navigate('WishList');
+  }
+
+  const handleImageCancel = () => {
+    setSelectedImage(undefined);
+  };
+
+  const handleInputChange = (
+    value: string,
+    target: 'email' | 'username' | 'name',
+  ) => {
+    setFormData(
+      target === 'email'
+        ? {...formData, email: value}
+        : target === 'name'
+        ? {...formData, name: value}
+        : {...formData, username: value},
+    );
+  };
+
+  const handleFormSubmit = async () => {
+    if (
+      !formData.email &&
+      !formData.username &&
+      !formData.name &&
+      !selectedImage
+    ) {
+      ToastAndroid.show('Debe de realizar algun cambio', ToastAndroid.SHORT);
+      return;
+    }
+    let payload: IUpdateUser = {
+      id: profileInfo.id,
+      email: formData.email,
+      username: formData.username,
+      name: formData.name,
+    };
+    if (selectedImage) {
+      const imageUrl = await UploadImage(selectedImage);
+      payload.profileImage = imageUrl;
+    }
+    await updateUser(payload);
+    const newProfileInfo = await getProfileInfo(profileInfo.id);
+    setProfileInfo(newProfileInfo);
+    setShowUpdateProfile(false);
+    ToastAndroid.show('Perfil Actualizado Correctamente', ToastAndroid.SHORT);
+    setSelectedImage(undefined);
+  };
+
+  const ProfileContent = () => (
+    <>
+      <AppText font="bolder" fontSize={20} style={{marginVertical: 20}}>
+        {profileInfo.username}
+      </AppText>
+      <AppText font="bold" fontSize={20} style={{marginVertical: 10}}>
+        {profileInfo.name}
+      </AppText>
+      <View style={[styles.profileNumbers, CommonStyles.transparentContainer]}>
+        <View style={styles.numberItem}>
+          <Icon size={30} name="people" color="#ffff" />
+          <AppText>{String(profileInfo.following.length)}</AppText>
+        </View>
+        <View style={styles.numberItem}>
+          <MaterialIcons size={30} name="account-heart" color="#ffff" />
+          <AppText>{String(profileInfo.following.length)}</AppText>
+        </View>
+      </View>
+      <LinearGradient
+        colors={AppGradientsColors.active}
+        style={styles.separator}
+      />
+    </>
+  );
+
+  const ProfileForm = () => (
+    <View style={[CommonStyles.transparentContainer, styles.formContainer]}>
+      <AppText font="bold" fontSize={15}>
+        Editar Perfil
+      </AppText>
+      <Input
+        stateManagment
+        value={formData.username}
+        style={styles.formInput}
+        icon="person"
+        placeHolder="Nombre de Usuario"
+        onChange={value => handleInputChange(value, 'username')}
+      />
+      <Input
+        stateManagment
+        value={formData.email}
+        style={styles.formInput}
+        icon="email"
+        placeHolder="Correo"
+        onChange={value => handleInputChange(value, 'email')}
+      />
+      <Input
+        stateManagment
+        value={formData.name}
+        style={styles.formInput}
+        icon="person"
+        placeHolder="Nombre"
+        onChange={value => handleInputChange(value, 'name')}
+      />
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '80%',
+          justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity style={[styles.submit, {backgroundColor: 'white'}]}>
+          <AppText
+            font="bold"
+            fontSize={15}
+            color="black"
+            onPress={handleUpdateProfile}>
+            Cancelar
+          </AppText>
+        </TouchableOpacity>
+        <GradientButton onPress={handleFormSubmit} style={styles.submit}>
+          <AppText font="bold" fontSize={15}>
+            Guardar
+          </AppText>
+        </GradientButton>
+      </View>
+    </View>
+  );
+
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={AppGradientsColors.base} style={styles.main}>
       {authState.isAunthenticated ? (
         <>
-          {showCamera ? (
-            <AppCamera handleShow={handleModalShowChange} />
-          ) : (
-            <LinearGradient
-              colors={['#1D5771', '#2A8187', '#46D9B5']}
-              style={styles.container}>
-              <View style={styles.right}>
-                <Icons
-                  size={25}
-                  name='menu'
-                  style={styles.iconMenu}
-                  color='#ffff'
-                  onPress={toggleBottomNavigationView} />
+          {authState.profile?.id === profileInfo.id && !showUpdateProfile && (
+            <GradientButton
+              onPress={handleBottomMenuShow}
+              style={styles.menuButton}>
+              <Icon size={25} name="menu" color="#ffff" />
+            </GradientButton>
+          )}
+          <ScrollView contentContainerStyle={styles.container}>
+            {selectedImage ? (
+              <ProfileIcon source={selectedImage.uri} focused size={150} />
+            ) : (
+              <ProfileIcon
+                source={profileInfo.profileImage}
+                focused
+                size={150}
+              />
+            )}
+            {showUpdateProfile && (
+              <View style={styles.imagesActions}>
+                {selectedImage && (
+                  <Icon
+                    name="cancel"
+                    size={35}
+                    color="#C21A1A"
+                    onPress={handleImageCancel}
+                  />
+                )}
+                <Icon
+                  style={{marginLeft: 'auto'}}
+                  name="camera"
+                  size={35}
+                  color="white"
+                  onPress={() => handleShowCamera()}
+                />
               </View>
-              <ScrollView>
-                <View>
+            )}
+            {!showUpdateProfile ? <ProfileContent /> : <ProfileForm />}
+          </ScrollView>
+          <BottomSheet
+            visible={showBottomMenu}
+            onBackButtonPress={handleBottomMenuShow}
+            onBackdropPress={handleBottomMenuShow}>
+            <View style={styles.sheet}>
+              <View style={{ width: '50%', backgroundColor: 'black', padding: 1, borderRadius: 100, margin: 20}} />
+              <TouchableOpacity onPress={handleWishLists}>
+                <AppText
+                  color={'black'}
+                  fontSize={20}
+                  style={{padding: 10}}
+                  font="bold">
+                  Listas de Deseo
+                </AppText>
+              </TouchableOpacity>
 
-                  <View style={styles.contentProfile}>
-                    {file.filename === '' ? (
-                      <>
-                        <Image
-                          source={{
-                            uri: authState.profile?.profileImage ? authState.profile.profileImage : defaultImage,
-                          }}
-                          style={styles.imageStyle}
-                        />
-                        <Icons name='camera-enhance' size={40} style={styles.camera} color='black' onPress={handleShowCameraModal} />
-                      </>
+              <TouchableOpacity onPress={handleUpdateProfile}>
+                <AppText
+                  color={'black'}
+                  fontSize={20}
+                  style={{padding: 10}}
+                  font="bold">
+                  Editar Perfil
+                </AppText>
+              </TouchableOpacity>
 
-                    ) : (
-                      <>
-                        <Image
-                          source={{
-                            uri: file.filename ? file.uri : defaultImage,
-                          }}
-                          style={styles.imageStyle}
-                        />
-                        <View style={styles.row}>
-                          <Icons name='cancel' size={40} style={{ backgroundColor: 'rgba(0, 0, 0, 0.3);', borderRadius: 100 }} color='#A00000' onPress={cancel} />
-                          <Icons name='check' size={40} style={{ backgroundColor: 'rgba(0, 0, 0, 0.3);', borderRadius: 100 }} color='green' onPress={saveFile} />
-                        </View>
-                      </>
-                    )}
+              <TouchableOpacity onPress={handleChangePassword}>
+                <AppText
+                  color={'black'}
+                  fontSize={20}
+                  style={{padding: 10}}
+                  font="bold">
+                  Cambiar Contraseña
+                </AppText>
+              </TouchableOpacity>
 
+              <TouchableOpacity style={{padding: 10}} onPress={handleShowShops}>
+                <AppText color={'black'} fontSize={20} font="bold">
+                  Mis Tiendas
+                </AppText>
+              </TouchableOpacity>
 
-                  </View>
-                  <View style={styles.content}>
-                    <AppText fontSize={20} font="bolder">
-                      Nombre
-                    </AppText>
-                    {update ? (
-                      <Input
-                        backgroundColor={'#FFFFFF4F'}
-                        value={formData.username}
-                        placeHolder="Usuario"
-                        icon="person"
-                        onChange={value => handleInputChange(value, 'name')}
-                      />
-                    ) : (
-                      <AppText fontSize={18} >
-                        {String(authState.profile?.username)}
-                      </AppText>
-                    )}
-
-
-                    <AppText style={CommonStyles.mt_2} fontSize={20} font="bolder">
-                      Correo
-                    </AppText>
-                    {update ? (
-                      <Input
-                        backgroundColor={'#FFFFFF4F'}
-                        value={formData.email}
-                        placeHolder="Correo"
-                        icon="email"
-                        onChange={value => handleInputChange(value, 'email')}
-                      />
-                    ) : (
-                      <AppText fontSize={18} >
-                        {authState.profile?.email ? authState.profile?.email : ''}
-                      </AppText>
-                    )}
-                    {update ? (
-                      <View style={[styles.row, { width: '100%', top: 30 }]}>
-                        <GradientButton
-                          colors={AppGradientsColors.cancel}
-                          onPress={() => setUpdate(false)}
-                          style={styles.button}>
-                          <AppText font='bold' style={{ textAlign: 'center' }} fontSize={16}>Cancelar</AppText>
-                        </GradientButton>
-                        <GradientButton
-                          colors={AppGradientsColors.active}
-                          onPress={save}
-                          style={styles.button}>
-                          <AppText font='bold' style={{ textAlign: 'center' }} fontSize={16}>Guardar</AppText>
-                        </GradientButton>
-                      </View>
-                    ) : (
-                      <TouchableOpacity >
-                        <AppText style={styles.link} fontSize={20} font="bolder" onPress={updateStateModal}>
-                          Cambiar Contraseña
-                        </AppText>
-                      </TouchableOpacity>
-                    )
-                    }
-                  </View>
-                  <BottomSheet
-                    visible={visibleModal}
-                    onBackButtonPress={toggleBottomNavigationView}
-                    onBackdropPress={toggleBottomNavigationView}
-                  >
-                    <View style={styles.sheet}>
-                      <GradientButton colors={['#ffff', '#ffff']} onPress={updateProfile} style={styles.button}>
-                        <AppText color={'black'} fontSize={20} font="bold">
-                          Editar Perfil
-                        </AppText>
-                      </GradientButton>
-
-                      <GradientButton colors={['#ffff', '#ffff']} onPress={showShop} style={styles.button}>
-                        <AppText color={'black'} fontSize={20} font="bold">
-                          {shopId != '' ? 'Mis Tiendas' : 'Crear Tienda'}
-                        </AppText>
-
-                      </GradientButton>
-
-                      <GradientButton colors={['#ffff', '#ffff']} onPress={logOut} style={styles.button}>
-                        <AppText color={'red'} fontSize={20} font="bold">
-                          Cerrar Sesión
-                        </AppText>
-                      </GradientButton>
-
-                    </View>
-
-                  </BottomSheet>
-                </View>
-              </ScrollView>
-              <UpdatePassword show={showModal} hide={updateStateModal} />
-            </LinearGradient>
-          )
-          }
-
+              <TouchableOpacity style={{padding: 10}} onPress={handleLogOut}>
+                <AppText color={'red'} fontSize={20} font="bold">
+                  Cerrar Sesión
+                </AppText>
+              </TouchableOpacity>
+            </View>
+          </BottomSheet>
+          <UpdatePassword
+            show={showChangePassword}
+            hide={handleChangePassword}
+          />
+          {showCamera && <AppCamera handleShow={handleShowCamera} />}
         </>
       ) : (
         <AuthWidget />
       )}
-    </View >
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  link: {
-    marginTop: 20,
-    textDecorationLine: "underline"
+  main: {
+    width: '100%',
+    height: '100%',
   },
-  iconMenu: {
-    borderRadius: 50,
-    backgroundColor: 'rgba(0, 0, 0, 0.3);',
-    padding: 3
-  },
-  camera: {
-    padding: 3,
-    backgroundColor: 'rgba(0, 0, 0, 0.3);',
-    borderRadius: 100,
-    top: -30,
-    right: -40
-  },
-  NotLogin: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    top: '40%'
-  },
-  right: {
+  menuButton: {
+    position: 'absolute',
+    zIndex: 999,
     marginLeft: 'auto',
-  },
-  content: {
-    padding: 30
-  },
-  contentProfile: {
-    alignItems: 'center',
-  },
-  imageStyle: {
-    width: 160,
-    height: 160,
+    right: 10,
+    top: 10,
+    padding: 10,
     borderRadius: 100,
-    borderColor: '#ffff',
-    borderStyle: 'solid',
-    borderWidth: 2
+  },
+  container: {
+    alignItems: 'center',
+    paddingTop: '10%',
+  },
+  imagesActions: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: 120,
+    top: -30,
+    justifyContent: 'space-between',
+  },
+  separator: {
+    padding: 2,
+    width: '50%',
+    borderRadius: 100,
+    marginVertical: 10,
+  },
+  profileNumbers: {
+    display: 'flex',
+    flexDirection: 'row',
+    padding: 10,
+    width: '50%',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+  },
+  numberItem: {
+    alignItems: 'center',
   },
   sheet: {
     backgroundColor: '#ffff',
     width: '100%',
-    height: 200,
     alignItems: 'center',
     justifyContent: 'center',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
-  row: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '40%',
-    justifyContent: 'space-between',
-    top: -10
+  formContainer: {
+    padding: 20,
+    width: '80%',
   },
-  container: {
-    flex: 1,
+  formInput: {
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 10,
   },
-  button: {
-    padding: 15
-  },
-  docker: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  submit: {
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 10,
   },
 });
 

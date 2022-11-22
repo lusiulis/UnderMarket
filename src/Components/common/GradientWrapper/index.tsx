@@ -13,7 +13,7 @@ type IGradientWrapperProps = {
 const GradientWrapper = ({children, style, colors}: IGradientWrapperProps) => {
   return (
     <MaskedView
-      style={{flex: 1, flexDirection: 'row', height: '100%'}}
+      style={[{flex: 1, flexDirection: 'row', height: '100%'}, style]}
       maskElement={
         <View
           style={{
