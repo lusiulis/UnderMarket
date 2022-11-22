@@ -164,7 +164,7 @@ const CreateShop = ({ navigation }: IAppScreenProps) => {
                                                     backgroundColor={'#FFFFFF4F'}
                                                     value={formData.description}
                                                     placeHolder="Descripción"
-                                                    icon="title"
+                                                    icon="notes"
                                                     onChange={value => handleInputChange(value, 'description')}
                                                 />
                                             </View>

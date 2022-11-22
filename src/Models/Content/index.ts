@@ -2,6 +2,7 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import {IPaginationPayload} from '..';
+import { getRatingByContent } from '../Rating/rating.model';
 import {getShopPreview} from '../Shop/shop.model';
 import {
   IAddContentPayload,
@@ -11,18 +12,6 @@ import {
 import {formatContentCardDocs} from './utils';
 
 const ContentCollection = firestore().collection('content');
-
-const handleSuscriptionResponse = async (
-  data: FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>,
-): Promise<IContentCard[]> => {
-  const formatedContents = await Promise.all(
-    formatContentCardDocs(data.docs).map(async content => {
-      content.shop = await getShopPreview(content.shop.id);
-      return content;
-    }),
-  );
-  return formatedContents;
-};
 
 export const addContent = async (
   payload: IAddContentPayload,
@@ -61,10 +50,22 @@ export const getContentsByShopId = async (
   return formatContentCardDocs(dbResponse.docs);
 };
 
-export const getContentSuscription = (
-  onComplete: (result: IContentCard[]) => void,
-) => {
-  ContentCollection.onSnapshot(async data =>
-    onComplete(await handleSuscriptionResponse(data)),
+export const getContentSuscription = (onComplete: (result: IContentCard[]) => void, criteria: string) => {
+  ContentCollection.onSnapshot(async (data) => onComplete(await handleSuscriptionResponse(criteria,data)))
+}
+
+const handleSuscriptionResponse = async (criteria: string ,data: FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>): Promise<IContentCard[]> => {
+  const formatedContents = await Promise.all(
+    formatContentCardDocs(data.docs).map(async content => {
+      content.rating = await getRatingByContent(content.id);
+      content.shop = await getShopPreview(content.shop.id);
+      return content;
+    }),
   );
-};
+  if(criteria !== ''){
+    return formatedContents.filter(x=> x.title.includes(criteria) || x.description.includes(criteria) || x.price.toString().includes(criteria))
+  }
+  console.log('aquiiiiiii')
+  return formatedContents
+}
+

@@ -29,18 +29,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
+    width: '85%'
   },
   categoryContainer: {
     display: 'flex',
   },
 });
 
-const SearchBar = () => {
+type IModal = {
+  search: (value:string) => void;
+};
+0
+const SearchBar = ({search}: IModal) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearchBarChange = (value: string) => {
     setSearchTerm(value);
   };
+  const searchContent = () =>{
+    console.log(searchTerm)
+    search(searchTerm)
+  }
 
   return (
     <View style={styles.container}>
@@ -52,15 +61,13 @@ const SearchBar = () => {
             onChange={handleSearchBarChange}
             color="black"
           />
-          <View style={{display: 'flex', flex: .5}}>
+          <View style={{display: 'flex', flex: .2}}>
             <GradientWrapper>
               <Icon name="options-sharp" size={25} color="white" />
             </GradientWrapper>
           </View>
         </View>
-        <GradientWrapper>
-          <Icon name="paper-plane" size={25} color="white" />
-        </GradientWrapper>
+          <Icon name="paper-plane" size={25} color="white" onPress={searchContent}/>
       </View>
       <View style={styles.categoryContainer}></View>
     </View>

@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "^6.7.0",
     "@react-native-firebase/app": "^16.1.1",
     "@react-native-firebase/firestore": "^16.1.1",
     "@react-native-firebase/storage": "^16.4.4",
@@ -28,6 +29,7 @@
     "react-native-image-picker": "^4.10.1",
     "react-native-image-slider-banner": "^1.0.3",
     "react-native-linear-gradient": "^2.6.2",
+    "react-native-ratings": "^8.1.0",
     "react-native-safe-area-context": "3.4.1",
     "react-native-screens": "^3.18.2",
     "react-native-uuid": "^2.0.1",

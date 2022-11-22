@@ -24,6 +24,7 @@ type IInputProps = {
   backgroundColor?: string;
   keyboardType?: KeyboardType;
   stateManagment?: boolean;
+  editable?: boolean;
   focused?: boolean;
   setFocused?: () => void;
 };
@@ -40,6 +41,7 @@ const Input = ({
   backgroundColor,
   stateManagment,
   keyboardType,
+  editable,
   focused,
   setFocused,
 }: IInputProps) => {
@@ -107,10 +109,11 @@ const Input = ({
             name={icon}
             size={18}
             color={color ? color : 'white'}
-            style={{marginRight: 10}}
+            style={{marginRight: 10, marginLeft: 7}}
           />
         )}
         <TextInput
+          editable = {!editable ? true : false}
           placeholderTextColor={color ? color : 'white'}
           style={[styles.textInput]}
           onChangeText={stateManagment ? handleInputChange : onChange}
