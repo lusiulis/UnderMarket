@@ -24,6 +24,7 @@ const Navigation = () => {
       <Stack.Screen name="ShopsList" component={ShopsList} />
       <Stack.Screen name="Shop" component={ShopProfile} />
       <Stack.Screen name="WishList" component={WishList} />
+      <Stack.Screen name="NewShop" component={CreateShop} />
     </Stack.Navigator>
   );
 };

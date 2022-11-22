@@ -41,7 +41,7 @@ const Input = ({
   backgroundColor,
   stateManagment,
   keyboardType,
-  editable
+  editable,
   focused,
   setFocused,
 }: IInputProps) => {
@@ -109,7 +109,7 @@ const Input = ({
             name={icon}
             size={18}
             color={color ? color : 'white'}
-            style={{marginRight: 10}}
+            style={{marginRight: 10, marginLeft: 7}}
           />
         )}
         <TextInput

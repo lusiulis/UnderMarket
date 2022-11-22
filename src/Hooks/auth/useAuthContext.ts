@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IAuthContext, IAuthProfile, IAuthState } from ".";
+import { IAuthContext, IAuthProfile, IAuthState } from "./";
 
 export const useAuthContext = (): IAuthContext => {
   const [authState, setAuthState] = useState < IAuthState > ({
