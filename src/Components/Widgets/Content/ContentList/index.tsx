@@ -55,7 +55,7 @@ const ContentList = ({
     <View style={styles.main}>
       <View style={styles.container}>
         {contents.map((content, index) => (
-          <View style={{width: '80%'}} key={index}>
+          <View style={{width: '90%'}} key={index}>
             <TouchableOpacity
               onPress={() => handlePressCard(content)}
               activeOpacity={1}>
@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     width: '100%',
-    padding: 10,
   },
   item: {
     backgroundColor: 'rgba(0,0,0,0.6)',
@@ -162,7 +161,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     alignItems: 'center',
     display: 'flex',
-    padding: 10,
+    padding: 7,
     width: '100%',
   },
   profileContainer: {

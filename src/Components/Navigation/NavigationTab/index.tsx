@@ -5,11 +5,11 @@ import GradientWrapper from '../../Common/GradientWrapper';
 import { useContext } from 'react';
 import { AuthContext } from '../../../Contexts/appContentProvider';
 
-type IIcon = 'home' | 'search' | 'notifications' | 'add-circle' | 'profile';
+type IIcon = 'home' | 'event' | 'notifications' | 'add-circle' | 'profile';
 
 type INavigationTabProps = {
   focused: boolean;
-  value: 'Home' | 'Search' | 'Notifications' | 'Profile' | 'Post';
+  value: 'Home' | 'Events' | 'Notifications' | 'Profile' | 'Post';
   icon: IIcon;
 };
 

@@ -12,18 +12,22 @@ const Home = () => {
   const [contentList, setContentList] = useState<IContentCard[]>([]);
 
   useEffect(() => {
-    getContentSuscription(handleOnSnapshotUpdate);
+    getContentSuscription(handleOnSnapshotUpdate, '');
   }, []);
 
   const handleOnSnapshotUpdate = (contents: IContentCard[]) => {
     setContentList(contents);
   };
 
+  const searchContent=(criteria:string)=>{
+    getContentSuscription(handleOnSnapshotUpdate, criteria);
+  }
+
   return (
     <LinearGradient
       colors={['#1D5771', '#2A8187', '#46D9B5']}
       style={styles.mainContainer}>
-      <SearchBar />
+      <SearchBar search={searchContent}/>
       <ScrollView contentContainerStyle={{alignItems: 'center'}}>
       <ContentList contents={contentList} />
       </ScrollView>
