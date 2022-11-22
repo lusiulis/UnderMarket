@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {AppGradientsColors, CommonStyles} from '../../Assets/Styles';
 import AppText from '../../Components/Common/Text';
@@ -57,7 +57,10 @@ const WishList = ({navigation}: IScreenProps) => {
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
                 key={index}>
-                <AppText>{wishList.name}</AppText>
+                <AppText font='bold' fontSize={12}>{wishList.name}</AppText>
+                <View style={styles.imageContainer}>
+                  <Image source={{uri: wishList.previewImage}}  />
+                </View>
               </LinearGradient>
             ))}
           </View>
@@ -82,6 +85,9 @@ const styles = StyleSheet.create({
   wishListItem: {
     padding: 10,
     borderRadius: 10
+  },
+  imageContainer: {
+
   }
 });
 

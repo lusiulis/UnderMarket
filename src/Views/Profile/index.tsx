@@ -86,6 +86,7 @@ const Profile = ({route, navigation}: IScreenProps) => {
   };
 
   const handleShowShops = () => {
+    setShowBottomMenu(false);
     navigation.navigate('ShopsList');
   };
 
