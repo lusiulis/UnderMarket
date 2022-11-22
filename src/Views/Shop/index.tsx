@@ -11,18 +11,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import {CommonStyles} from '../../Assets/Styles';
 import AppText from '../../Components/Common/Text';
 import GradientButton from '../../Components/Common/Button/GradientButton';
-import {getShopById} from '../../Models/Shop/shop.model';
+import {follow, getShopById, unFollow} from '../../Models/Shop/shop.model';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {IShop, IShopLight, ISocialNetwork} from '../../Models/Shop/shop';
-import AppModal from '../../Components/Common/AppModal';
-import {IContentCard} from '../../Models/Content/Content';
 import ContentList from '../../Components/Widgets/Content/ContentList';
-import {getContentsByShopId} from '../../Models/Content';
 import {ScrollView} from 'react-native-gesture-handler';
 import {IScreenProps} from '../../Components/Navigation/navigation';
 import {Initializer} from '../../Utils';
+import {AuthContext} from '../../Contexts/appContentProvider';
 
 const Shop = ({route, navigation}: IScreenProps) => {
+  const {authState} = useContext(AuthContext);
   const defaultImage =
     'https://st2.depositphotos.com/1001248/8319/v/450/depositphotos_83194622-stock-illustration-store-icon.jpg';
 
@@ -30,11 +29,13 @@ const Shop = ({route, navigation}: IScreenProps) => {
 
   useEffect(() => {
     getShop(route.params.id);
-  }, []);
+  }, [route.params]);
 
   const getShop = async (id: string) => {
-    const shop = await getShopById(id);
-    setShopInfo(shop);
+    if (authState.profile) {
+      const shop = await getShopById(id, authState.profile.id);
+      setShopInfo(shop);
+    }
   };
 
   const openNetworks = (data: string) => {
@@ -43,7 +44,21 @@ const Shop = ({route, navigation}: IScreenProps) => {
     }
   };
 
-  const followUnfollowShop = async () => {};
+  const followUnfollowShop = async () => {
+    if (authState.profile) {
+      if (!shopInfo.followed) {
+        await follow(shopInfo.id, authState.profile.id);
+        setShopInfo({...shopInfo, followed: true});
+      } else {
+        await unFollow(shopInfo.id, authState.profile.id);
+        setShopInfo({...shopInfo, followed: false});
+      }
+    }
+  };
+
+  const hanldleCreateEvent = () => {
+    navigation.navigate('NewEvent', {id: shopInfo.id});
+  };
 
   const getNetworks = () => {
     return (
@@ -54,7 +69,7 @@ const Shop = ({route, navigation}: IScreenProps) => {
             source={require('../../Assets/Icons/whatsapp.png')}
           />
         </TouchableOpacity>
-        
+
         {shopInfo.networks.map(net => {
           if (net.network === 'FACEBOOK') {
             return (
@@ -82,59 +97,65 @@ const Shop = ({route, navigation}: IScreenProps) => {
   };
 
   return (
-        <LinearGradient
-          colors={['#1D5771', '#2A8187', '#46D9B5']}
-          style={styles.container}>
-          <ScrollView>
-            <Icon
-              name="arrow-back-ios"
-              size={25}
-              color="white"
-              style={styles.goBack}
-              onPress={() => navigation.goBack()}
-            />
-            <View style={styles.form}>
-              <Image
-                style={styles.image}
-                source={{
-                  uri: shopInfo.profileImage !== '' ? shopInfo.profileImage : defaultImage
-                }}
-              />
-              <View style={CommonStyles.pAll}>
-                <Text style={styles.text}>{shopInfo.followers}</Text>
-                <AppText font="bold" fontSize={14}>
-                  Seguidores
-                </AppText>
-              </View>
+    <LinearGradient
+      colors={['#1D5771', '#2A8187', '#46D9B5']}
+      style={styles.container}>
+      <Icon
+        name="close"
+        size={25}
+        color="black"
+        style={styles.goBack}
+        onPress={() => navigation.goBack()}
+      />
+      <ScrollView>
+        <View style={styles.form}>
+          <Image
+            style={styles.image}
+            source={{
+              uri:
+                shopInfo.profileImage !== ''
+                  ? shopInfo.profileImage
+                  : defaultImage,
+            }}
+          />
+          <View style={CommonStyles.pAll}>
+            <Text style={styles.text}>{shopInfo.followers}</Text>
+            <AppText font="bold" fontSize={14}>
+              Seguidores
+            </AppText>
+          </View>
 
-              <View style={CommonStyles.pAll}>
-                <Text style={styles.text}>{shopInfo.posts.length}</Text>
-                <AppText font="bold" fontSize={14}>
-                  Publicaciones
-                </AppText>
-              </View>
-            </View>
-            <View style={[CommonStyles.pt_1, CommonStyles.pl_1]}>
-              <AppText font="bolder" fontSize={18}>
-                {shopInfo.name}
+          <View style={CommonStyles.pAll}>
+            <Text style={styles.text}>{shopInfo.posts.length}</Text>
+            <AppText font="bold" fontSize={14}>
+              Publicaciones
+            </AppText>
+          </View>
+        </View>
+        <View style={[CommonStyles.pt_1, CommonStyles.pl_1]}>
+          <AppText font="bolder" fontSize={18}>
+            {shopInfo.name}
+          </AppText>
+          <Text style={styles.description}>{shopInfo.description}</Text>
+          <View style={styles.formNetworks}>{getNetworks()}</View>
+        </View>
+        <View style={styles.form}>
+          <GradientButton onPress={followUnfollowShop} style={styles.button}>
+            <AppText fontSize={16} font="bold">
+              {shopInfo.followed ? 'Dejar de Seguir' : 'Seguir'}
+            </AppText>
+          </GradientButton>
+          {authState.profile && authState.profile.id === shopInfo.userId && (
+            <GradientButton onPress={hanldleCreateEvent} style={styles.button}>
+              <AppText fontSize={16} font="bold">
+                Crear Evento
               </AppText>
-              <Text style={styles.description}>
-                {shopInfo.description}
-              </Text>
-              <View style={styles.formNetworks}>{getNetworks()}</View>
-            </View>
-            <View style={styles.form}>
-              <GradientButton
-                onPress={followUnfollowShop}
-                style={styles.button}>
-                <AppText fontSize={16} font="bold">
-                  Seguir
-                </AppText>
-              </GradientButton>
-            </View>
-            <ContentList contents={shopInfo.posts} />
-          </ScrollView>
-        </LinearGradient>
+            </GradientButton>
+          )}
+        </View>
+        <ContentList contents={shopInfo.posts} />
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
@@ -162,9 +183,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   goBack: {
-    position: 'relative',
-    top: '2%',
-    left: 20,
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    padding: 5,
+    backgroundColor: 'white',
+    borderRadius: 100,
+    zIndex: 999,
   },
   container: {
     flex: 1,

@@ -102,7 +102,7 @@ const CommentSection = ({contentId}: ICommentSectionProps) => {
           comments.map((comment, index) => (
             <View style={styles.commentItem} key={index}>
               <View style={styles.itemProfileContainer}>
-                <ProfileIcon source={comment.from.profileImage} size={20} />
+                <ProfileIcon source={comment.from.profileImage} size={20} redirects={{id: comment.from.id, isShop: false}}/>
                 <AppText
                   style={{marginLeft: 10}}
                   font="bold"

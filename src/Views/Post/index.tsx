@@ -62,8 +62,7 @@ const Post = ({ navigation }: IScreenProps) => {
   const [selectedShop, setSelectedShop] = useState<IShopLight>({
     id: '',
     name: '',
-    description: '',
-    phoneNumber: ''
+    profileImage: ''
   });
 
   const fetchData = useCallback(async () => {

@@ -15,6 +15,7 @@ export type IShop = {
   posts: IContentCard[];
   followers: number;
   userId: string
+  followed: boolean;
 };
 
 export type IShopLight = {

@@ -120,7 +120,9 @@ const Input = ({
           placeholder={placeHolder}
           value={stateManagment ? inputValue : value}
           keyboardType={keyboardType}
-          onFocus={handleFocus}
+          onFocus={() => {
+            if(setFocused) handleFocus()
+          }}
           onBlur={handleBlur}
           secureTextEntry={secure}
         />

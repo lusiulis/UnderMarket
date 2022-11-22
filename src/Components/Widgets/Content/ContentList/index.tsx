@@ -5,11 +5,13 @@ import {
   ViewStyle,
   TouchableOpacity,
   Image,
+  ToastAndroid,
 } from 'react-native';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {AppGradientsColors} from '../../../../Assets/Styles';
+import { AuthContext } from '../../../../Contexts/appContentProvider';
 import {IContentCard} from '../../../../Models/Content/Content';
 import AppModal from '../../../Common/AppModal';
 import AppText from '../../../Common/Text';
@@ -30,6 +32,7 @@ const ContentList = ({
   onPagination,
   refresh,
 }: IContentListProps) => {
+  const {authState} = useContext(AuthContext);
   const [selectedContent, setSelectedContent] = useState<IContentCard>();
   const [showCardModal, setShowCardModal] = useState(false);
   const [showModalSave, setShowModalSave] = useState(false);
@@ -47,6 +50,10 @@ const ContentList = ({
   };
 
   const handleSaveContent = (card: IContentCard) => {
+    if(!authState.isAunthenticated) {
+      ToastAndroid.show('Debe Inicair Sesión', ToastAndroid.SHORT);
+      return
+    }
     setSelectedContent(card);
     setShowModalSave(!showModalSave);
   };
@@ -89,7 +96,10 @@ const ContentList = ({
                   />
                 </View>
                 <View style={styles.profileContainer}>
-                  <ProfileIcon source={content.shop.profileImage} />
+                  <ProfileIcon
+                    source={content.shop.profileImage}
+                    redirects={{id: content.shop.id, isShop: true}}
+                  />
                   <AppText font="bold">{content.shop.name}</AppText>
                 </View>
                 <View style={styles.contentHistory}>
@@ -107,18 +117,27 @@ const ContentList = ({
                   <AppText>{'₡'.concat(String(content.price))}</AppText>
                 </View>
                 <View style={styles.actionsContainer}>
-                  <Icon
-                    name="heart"
-                    size={20}
-                    color="black"
-                    onPress={() => handleSaveContent(content)}
-                  />
-                  <Icon
-                    name="cards-playing-heart"
-                    size={20}
-                    color="black"
-                    onPress={() => handleSaveContent(content)}
-                  />
+                  <LinearGradient
+                    colors={AppGradientsColors.active}
+                    style={styles.action}>
+                    <Icon
+                      name="heart"
+                      size={20}
+                      color="white"
+                      onPress={() => handleSaveContent(content)}
+                    />
+                  </LinearGradient>
+
+                  <LinearGradient
+                    colors={AppGradientsColors.active}
+                    style={styles.action}>
+                    <Icon
+                      name="cards-playing-heart"
+                      size={20}
+                      color="white"
+                      onPress={() => handleSaveContent(content)}
+                    />
+                  </LinearGradient>
                 </View>
               </View>
             </TouchableOpacity>
@@ -189,8 +208,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 60,
-    marginRight: 'auto',
+    marginLeft: 'auto',
+    marginRight: 10,
+  },
+  action: {
+    padding: 5,
+    borderRadius: 100,
+    marginLeft: 10,
   },
 });
 
