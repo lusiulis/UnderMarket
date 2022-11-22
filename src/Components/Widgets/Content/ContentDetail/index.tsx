@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   contentCard: {
     margin: '5%',
-    width: '60%',
+    width: '90%',
     padding: 10,
   },
   contentHistory: {

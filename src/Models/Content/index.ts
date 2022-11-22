@@ -45,16 +45,19 @@ export const getContentsByShopId = async (shopId: string): Promise<IContentCard[
   return formatContentCardDocs(dbResponse.docs);
 };
 
-export const getContentSuscription = (onComplete: (result: IContentCard[]) => void) => {
-  ContentCollection.onSnapshot(async (data) => onComplete(await handleSuscriptionResponse(data)))
+export const getContentSuscription = (onComplete: (result: IContentCard[]) => void, criteria: string) => {
+  ContentCollection.onSnapshot(async (data) => onComplete(await handleSuscriptionResponse(criteria,data)))
 }
 
-const handleSuscriptionResponse = async (data: FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>): Promise<IContentCard[]> => {
+const handleSuscriptionResponse = async (criteria: string ,data: FirebaseFirestoreTypes.QuerySnapshot<FirebaseFirestoreTypes.DocumentData>): Promise<IContentCard[]> => {
   const formatedContents = await Promise.all(
     formatContentCardDocs(data.docs).map(async content => {
       content.shop = await getShopPreview(content.shop.id);
       return content;
     }),
   );
+  if(criteria !== ''){
+    return formatedContents.filter(x=> x.title.includes(criteria) || x.description.includes(criteria) || x.price.toString().includes(criteria))
+  }
   return formatedContents
 }

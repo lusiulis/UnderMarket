@@ -17,6 +17,7 @@ type IInputProps = {
   backgroundColor?: string;
   keyboardType?: KeyboardType;
   stateManagment?: boolean;
+  editable?: boolean;
 };
 
 const Input = ({
@@ -30,7 +31,8 @@ const Input = ({
   color,
   backgroundColor,
   stateManagment,
-  keyboardType
+  keyboardType,
+  editable
 }: IInputProps) => {
   const [focused, setFocused] = useState(false);
   const [inputValue, setInputValue] = useState(String(value))
@@ -77,9 +79,10 @@ const Input = ({
           {borderColor: getBorderColor(), flexDirection: 'row'},
         ]}>
         {icon && (
-          <Icon name={icon} size={18} color={color ? color : 'white'} style={{marginRight: 10}} />
+          <Icon name={icon} size={18} color={color ? color : 'white'} style={{marginRight: 10, marginLeft: 5}} />
         )}
         <TextInput
+          editable = {!editable ? true : false}
           placeholderTextColor={color ? color : 'white'}
           style={[styles.textInput]}
           onChangeText={stateManagment ? handleInputChange : onChange}

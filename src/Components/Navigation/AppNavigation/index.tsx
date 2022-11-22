@@ -1,11 +1,11 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StyleSheet} from 'react-native';
 import {CommonStyles} from '../../../Assets/Styles';
+import EventView from '../../../Views/Events';
 import Home from '../../../Views/Home';
 import Notifications from '../../../Views/Notifications';
 import Post from '../../../Views/Post';
 import Profile from '../../../Views/Profile';
-import Search from '../../../Views/Search';
 import NavigationTab from '../NavigationTab';
 
 const Navbar = createBottomTabNavigator();
@@ -29,11 +29,11 @@ const Navigation = () => {
         }}
       />
       <Navbar.Screen
-        name="Search"
-        component={Search}
+        name="Events"
+        component={EventView}
         options={{
           tabBarIcon: ({focused}) => (
-            <NavigationTab icon="search" focused={focused} value="Search" />
+            <NavigationTab icon="event" focused={focused} value="Events" />
           ),
           tabBarShowLabel: false,
         }}

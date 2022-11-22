@@ -12,7 +12,7 @@ type StackParamList = {
 
 type AppStackParamList = {
   Home: undefined;
-  Search: undefined;
+  Events: undefined;
   Profile: {id: string};
   Notifications: undefined;
   post: undefined;
