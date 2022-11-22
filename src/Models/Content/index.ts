@@ -5,12 +5,10 @@ import {IPaginationPayload} from '..';
 import {getShopPreview} from '../Shop/shop.model';
 import {
   IAddContentPayload,
-  IContent,
   IContentCard,
-  IGetContentsByShopPayload,
   IPaginatedContentCards,
 } from './Content';
-import {formatContentCardDocs, formatContentDocs} from './utils';
+import {formatContentCardDocs} from './utils';
 
 const ContentCollection = firestore().collection('content');
 

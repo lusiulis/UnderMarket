@@ -7,6 +7,7 @@ import CreateShop from '../../Views/Shop/CreateShop';
 import ShopsList from '../../Views/Shop/ShopList';
 import ShopProfile from '../../Views/Shop';
 import WishList from '../../Views/WishLists';
+import WishListDetail from '../../Views/WishLists/WIshListDetail';
 
 const Navigation = () => {
   const Stack = createStackNavigator();
@@ -23,6 +24,7 @@ const Navigation = () => {
       <Stack.Screen name="ShopsList" component={ShopsList} />
       <Stack.Screen name="Shop" component={ShopProfile} />
       <Stack.Screen name="WishList" component={WishList} />
+      <Stack.Screen name="WishListDetail" component={WishListDetail} />
     </Stack.Navigator>
   );
 };
