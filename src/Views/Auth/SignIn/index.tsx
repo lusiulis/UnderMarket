@@ -22,20 +22,18 @@ const SignIn = ({ navigation }: IAppScreenProps) => {
     password: '',
     confirmPassword: '',
     phoneNumber: '',
+    name: ''
   });
-
-  const [isStore, setIsStore] = useState(false);
 
   const handleGoBack = () => {
     navigation.navigate('LogIn');
   };
 
-  const handleToggleChange = () => setIsStore(!isStore);
-
   const handleInputChange = (value: string, input: string) => {
     if (input === 'email') setFormData({ ...formData, email: value });
     else if (input === 'username') setFormData({ ...formData, username: value });
     else if (input === 'password') setFormData({ ...formData, password: value });
+    else if (input === 'name') setFormData({ ...formData, name: value });
     else if (input === 'confirmPassword')
       setFormData({ ...formData, confirmPassword: value });
     else if (input === 'phoneNumber')
@@ -63,7 +61,7 @@ const SignIn = ({ navigation }: IAppScreenProps) => {
   };
 
   const validateForm = () => {
-    return !formData.username || !formData.confirmPassword || !formData.email || !formData.password;
+    return !formData.username || !formData.confirmPassword || !formData.email || !formData.password || !formData.name;
   }
 
   return (
@@ -104,6 +102,12 @@ const SignIn = ({ navigation }: IAppScreenProps) => {
                   onChange={value => handleInputChange(value, 'username')}
                 />
                 <Input
+                  value={formData.name}
+                  placeHolder="Nombre"
+                  icon="person"
+                  onChange={value => handleInputChange(value, 'name')}
+                />
+                <Input
                   value={formData.password}
                   placeHolder="Contraseña"
                   secure
@@ -117,14 +121,6 @@ const SignIn = ({ navigation }: IAppScreenProps) => {
                   icon="lock"
                   onChange={value => handleInputChange(value, 'confirmPassword')}
                 />
-                {isStore && (
-                  <Input
-                    value={formData.phoneNumber}
-                    placeHolder="Número de Telefono"
-                    icon="phone"
-                    onChange={value => handleInputChange(value, 'phoneNumber')}
-                  />
-                )}
               </ScrollView>
             </View>
           </View>

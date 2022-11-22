@@ -1,7 +1,6 @@
 import {IAddShop, IShop, IShopLight, IShopPreview, ISocialNetwork} from './shop';
 import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
-import { IContent } from '../Content/Content';
 import { getContentsByShopId } from '../Content';
 
 const shopColletion = firestore().collection('shop');
@@ -29,9 +28,6 @@ export const getShopById = async (id: string): Promise<IShop> => {
   const followers = await followerCollection.where('shopId', '==', id).get();
   const networks: [] = shop.get('networks')
   const net: ISocialNetwork[] = []
-  if(networks) networks.forEach((net) => {
-    console.log(net)
-  })
   const posts = await getContentsByShopId(id);
   return { networks: net ,id: shop.id, profileImage: shop.get('profileImage'),name: shop.get('name'), description: shop.get('description'), phoneNumber: shop.get('phoneNumber'), followers: followers.docs.length, posts, userId: shop.get('userId')}
 }

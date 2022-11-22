@@ -25,17 +25,6 @@ type IContentListProps = {
   refresh?: () => void;
 };
 
-const isCloseToBottom = ({
-  nativeEvent,
-}: NativeSyntheticEvent<NativeScrollEvent>) => {
-  const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
-  const paddingToBottom = 20;
-  return (
-    layoutMeasurement.height + contentOffset.y >=
-    contentSize.height - paddingToBottom
-  );
-};
-
 const ContentList = ({
   contents,
   style,
@@ -91,6 +80,7 @@ const ContentList = ({
                       width: '100%',
                     }}
                     showIndicator={false}
+                    preview={false}
                   />
                 </View>
                 <View style={styles.profileContainer}>

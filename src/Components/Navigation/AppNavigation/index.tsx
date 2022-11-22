@@ -1,6 +1,8 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { useContext } from 'react';
 import {StyleSheet} from 'react-native';
 import {CommonStyles} from '../../../Assets/Styles';
+import { AuthContext } from '../../../Contexts/appContentProvider';
 import Home from '../../../Views/Home';
 import Notifications from '../../../Views/Notifications';
 import Post from '../../../Views/Post';
@@ -11,6 +13,7 @@ import NavigationTab from '../NavigationTab';
 const Navbar = createBottomTabNavigator();
 
 const Navigation = () => {
+  const {authState} = useContext(AuthContext);
   return (
     <Navbar.Navigator
       screenOptions={{
@@ -65,6 +68,12 @@ const Navigation = () => {
       <Navbar.Screen
         name="Profile"
         component={Profile}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate('Profile', {id: authState.profile?.id})
+          }
+        })}
         options={{
           tabBarIcon: ({focused}) => (
             <NavigationTab icon="profile" focused={focused} value="Profile" />

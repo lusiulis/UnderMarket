@@ -3,11 +3,10 @@ import LogIn from '../../Views/Auth/LogIn';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignIn from '../../Views/Auth/SignIn';
 import AppNavigation from './AppNavigation';
-import ProfileShop from '../../Views/Shop/ProfileShop';
 import CreateShop from '../../Views/Shop/CreateShop';
 import ShopsList from '../../Views/Shop/ShopList';
-import UpdatePassword from '../../Views/Auth/UpdatePassword';
 import ShopProfile from '../../Views/Shop';
+import WishList from '../../Views/WishLists';
 
 const Navigation = () => {
   const Stack = createStackNavigator();
@@ -23,6 +22,7 @@ const Navigation = () => {
       <Stack.Screen name="NewShop" component={CreateShop} />
       <Stack.Screen name="ShopsList" component={ShopsList} />
       <Stack.Screen name="Shop" component={ShopProfile} />
+      <Stack.Screen name="WishList" component={WishList} />
     </Stack.Navigator>
   );
 };

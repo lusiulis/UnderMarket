@@ -1,9 +1,16 @@
 import {useState} from 'react';
-import {View, StyleSheet, Text, TextInput, StyleProp, TextStyle} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  StyleProp,
+  TextStyle,
+} from 'react-native';
 import {AppColors} from '../../../Assets/Styles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {IconName} from '../../../Utils/common';
-import { KeyboardType } from 'react-native';
+import {KeyboardType} from 'react-native';
 
 type IInputProps = {
   icon?: IconName;
@@ -17,6 +24,8 @@ type IInputProps = {
   backgroundColor?: string;
   keyboardType?: KeyboardType;
   stateManagment?: boolean;
+  focused?: boolean;
+  setFocused?: () => void;
 };
 
 const Input = ({
@@ -30,10 +39,11 @@ const Input = ({
   color,
   backgroundColor,
   stateManagment,
-  keyboardType
+  keyboardType,
+  focused,
+  setFocused,
 }: IInputProps) => {
-  const [focused, setFocused] = useState(false);
-  const [inputValue, setInputValue] = useState(String(value))
+  const [inputValue, setInputValue] = useState(String(value));
 
   const getBorderColor = () => {
     if (error) {
@@ -47,10 +57,20 @@ const Input = ({
     }
   };
 
+  const handleFocus = () => {
+    if(setFocused) setFocused();
+    onChange(inputValue);
+  }
+
+  const handleBlur = () => {
+    if(setFocused) setFocused();
+    if(stateManagment) onChange(inputValue);
+  }
+
   const styles = StyleSheet.create({
     wrapper: {
       borderRadius: 10,
-      alignItems: 'center'
+      alignItems: 'center',
     },
     textInput: {
       color: color ? color : 'white',
@@ -64,20 +84,31 @@ const Input = ({
   });
 
   const handleInputChange = (value: string) => {
-    !((keyboardType === 'numeric' || keyboardType === 'number-pad') && value.length > 1 && value.startsWith('0')) ? setInputValue(value) : setInputValue(value.slice(1)) 
-  }
+    !(
+      (keyboardType === 'numeric' || keyboardType === 'number-pad') &&
+      value.length > 1 &&
+      value.startsWith('0')
+    )
+      ? setInputValue(value)
+      : setInputValue(value.slice(1));
+  };
 
   return (
     <View style={style}>
       <View
         style={[
-          {backgroundColor: backgroundColor? backgroundColor : ''},
+          {backgroundColor: backgroundColor ? backgroundColor : ''},
           styles.wrapper,
           {alignItems: icon ? 'center' : 'baseline'},
           {borderColor: getBorderColor(), flexDirection: 'row'},
         ]}>
         {icon && (
-          <Icon name={icon} size={18} color={color ? color : 'white'} style={{marginRight: 10}} />
+          <Icon
+            name={icon}
+            size={18}
+            color={color ? color : 'white'}
+            style={{marginRight: 10}}
+          />
         )}
         <TextInput
           placeholderTextColor={color ? color : 'white'}
@@ -86,13 +117,8 @@ const Input = ({
           placeholder={placeHolder}
           value={stateManagment ? inputValue : value}
           keyboardType={keyboardType}
-          onFocus={() => {
-            setFocused(true);
-          }}
-          onBlur={() => {
-            setFocused(false);
-            if(stateManagment) onChange(inputValue);
-          }}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           secureTextEntry={secure}
         />
       </View>

@@ -47,7 +47,7 @@ const ProfileIcon = ({style, size, focused, source}: IProfileIconProps) => {
         source={{
           width: size ? size : 35,
           height: size ? size : 35,
-          uri: source ? source: defaultImage,
+          uri: source && source !== '' ? source: defaultImage,
         }}
         style={styles.imageStyle}
       />
